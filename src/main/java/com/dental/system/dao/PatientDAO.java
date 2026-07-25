@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PatientDAO implements InPatientDAO {
+
+    //Add patient to the database
     @Override
     public boolean addPatient(Patient patient) {
         String sql = "INSERT INTO patients(first_name, last_name, gender, date_of_birth, phone, email, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -34,9 +36,38 @@ public class PatientDAO implements InPatientDAO {
         return false;
     }
 
+
+    //Get all patients records
     @Override
     public List<Patient> getAllPatients() {
-        return new ArrayList<>();
+
+        List<Patient> patients = new ArrayList<>();
+
+        String sql = "SELECT * FROM patients ORDER BY patient_id DESC";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()){
+            while (resultSet.next()){
+                Patient patient = new Patient();
+
+                patient.setPatientId(resultSet.getInt("patient_id"));
+                patient.setFirstName(resultSet.getString("first_name"));
+                patient.setLastName(resultSet.getString("last_name"));
+                patient.setGender(resultSet.getString("gender"));
+                patient.setDateOfBirth(resultSet.getDate("date_of_birth").toLocalDate());
+                patient.setPhone(resultSet.getString("phone"));
+                patient.setEmail(resultSet.getString("email"));
+                patient.setAddress(resultSet.getString("address"));
+
+                patients.add(patient);
+            }
+        }catch (SQLException e){
+            System.out.println("Patients records loading failed...");
+            e.printStackTrace();
+        }
+        return patients;
+
     }
 
     @Override
@@ -44,13 +75,48 @@ public class PatientDAO implements InPatientDAO {
         return null;
     }
 
+    //Update patient details
     @Override
     public boolean updatePatient(Patient patient) {
+        String sql = "UPDATE patients SET first_name = ?, last_name = ?, gender = ?, date_of_birth = ?, phone = ?, email = ?, address = ? WHERE patient_id = ? ";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, patient.getFirstName());
+            statement.setString(2, patient.getLastName());
+            statement.setString(3, patient.getGender());
+            statement.setDate(4, Date.valueOf(patient.getDateOfBirth()));
+            statement.setString(5, patient.getPhone());
+            statement.setString(6, patient.getEmail());
+            statement.setString(7, patient.getAddress());
+            statement.setInt(8, patient.getPatientId());
+
+            return statement.executeUpdate() > 0;
+
+        }catch (SQLException e){
+            System.out.println("Patient update failed..");
+            e.printStackTrace();
+        }
         return false;
     }
 
+    //Delete a patient
     @Override
     public boolean deletePatient(int patientId) {
+        String sql = "DELETE FROM patients WHERE patient_id = ? ";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, patientId);
+
+            return statement.executeUpdate() > 0;
+
+        }catch (SQLException e){
+            System.out.println("Patient delete failed..");
+            e.printStackTrace();
+        }
         return false;
     }
 }

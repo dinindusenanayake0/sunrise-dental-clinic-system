@@ -38,7 +38,7 @@ public class PatientService implements InPatientService {
 
     @Override
     public List<Patient> getAllPatients() {
-        return List.of();
+        return inPatientDAO.getAllPatients();
     }
 
     @Override
@@ -48,11 +48,32 @@ public class PatientService implements InPatientService {
 
     @Override
     public boolean updatePatient(Patient patient) {
-        return false;
+        if (patient == null || patient.getPatientId()<= 0){
+            return false;
+        }
+        if (patient.getFirstName() == null || patient.getFirstName().trim().isEmpty()){
+            return false;
+        }
+        if (patient.getLastName() == null || patient.getLastName().trim().isEmpty()){
+            return false;
+        }
+        if (patient.getGender() == null || patient.getGender().trim().isEmpty()){
+            return false;
+        }
+        if (patient.getDateOfBirth() == null){
+            return false;
+        }
+        if (patient.getPhone() == null || patient.getPhone().trim().isEmpty()){
+            return false;
+        }
+        return inPatientDAO.updatePatient(patient);
     }
 
     @Override
     public boolean deletePatient(int patientId) {
-        return false;
+        if (patientId <= 0){
+            return false;
+        }
+        return inPatientDAO.deletePatient(patientId);
     }
 }

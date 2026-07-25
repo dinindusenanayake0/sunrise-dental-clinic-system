@@ -89,8 +89,9 @@
                         View and manage registered patient information.
                     </p>
 
-                    <a href="#" class="btn btn-secondary disabled">
-                        Coming Soon
+                    <a href="patients" class="btn btn-primary">
+                        <i class="bi bi-people-fill me-1"></i>
+                        View Patients
                     </a>
                 </div>
 

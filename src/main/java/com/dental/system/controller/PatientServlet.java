@@ -12,20 +12,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 import java.time.LocalDate;
 
-@WebServlet("/add-patient")
+
+@WebServlet("/patients")
 public class PatientServlet extends HttpServlet {
 
     private final InPatientService patientService;
 
-    public PatientServlet(){
+    public PatientServlet() {
         this.patientService = new PatientService(new PatientDAO());
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
-        try{
+            throws ServletException, IOException {
+
+        String action = request.getParameter("action");
+
+
+        //Add patient
+        try {
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String gender = request.getParameter("gender");
@@ -46,16 +54,89 @@ public class PatientServlet extends HttpServlet {
             );
             boolean added = patientService.addPatient(patient);
 
-            if (added){
+            if (added) {
                 response.sendRedirect("add-patient.jsp?success=true");
-            }else {
-                request.setAttribute("error","Patient added failed...");
+            } else {
+                request.setAttribute("error", "Patient added failed...");
                 request.getRequestDispatcher("/add-patient.jsp").forward(request, response);
             }
-        }catch (Exception e){
-            request.setAttribute("error","Invalid Patient details.");
+        } catch (Exception e) {
+            request.setAttribute("error", "Invalid Patient details.");
             request.getRequestDispatcher("/add-patient.jsp");
+        }
+
+
+        //Update patient
+        if ("update".equals(action)) {
+
+            try {
+                int patientId = Integer.parseInt(request.getParameter("patientId"));
+
+                String firstName = request.getParameter("firstName");
+                String lastName = request.getParameter("lastName");
+                String gender = request.getParameter("gender");
+                LocalDate dateOfBirth = LocalDate.parse(request.getParameter("dateOfBirth"));
+                String phone = request.getParameter("phone");
+                String email = request.getParameter("email");
+                String address = request.getParameter("address");
+
+                Patient patient = new Patient(
+                        0,
+                        firstName,
+                        lastName,
+                        gender,
+                        dateOfBirth,
+                        phone,
+                        email,
+                        address
+                );
+                boolean updated = patientService.updatePatient(patient);
+
+                if (updated) {
+                    response.sendRedirect("patients?updated=true");
+                } else {
+                    response.sendRedirect("patients?updated=false");
+                }
+            } catch (Exception e) {
+                response.sendRedirect("patients?updated=false");
+            }
+            return;
         }
     }
 
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String action = request.getParameter("action");
+
+
+        //View all patients
+        List<Patient> patients = patientService.getAllPatients();
+
+        request.setAttribute("patients", patients);
+
+        request.getRequestDispatcher("/patients.jsp").forward(request, response);
+
+
+        //Delete patient
+        if ("delete".equals(action)) {
+
+            try {
+                int patientId = Integer.parseInt(request.getParameter("id"));
+
+                boolean deleted = patientService.deletePatient(patientId);
+
+                if (deleted) {
+                    response.sendRedirect("patients?deleted=true");
+                } else {
+                    response.sendRedirect("patients?deleted=false");
+                }
+            } catch (Exception e) {
+                response.sendRedirect("patients?deleted=true");
+            }
+            return;
+        }
+    }
 }

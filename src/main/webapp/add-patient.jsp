@@ -44,7 +44,7 @@
                 </div>
             <% } %>
 
-            <form action="add-patient" method="post">
+            <form action="patients" method="post">
 
                 <div class="row">
 
