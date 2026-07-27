@@ -112,8 +112,8 @@
                         Manage patient appointments and schedules.
                     </p>
 
-                    <a href="#" class="btn btn-secondary disabled">
-                        Coming Soon
+                    <a href="appointments" class="btn btn-primary">
+                        Appointments
                     </a>
                 </div>
 
