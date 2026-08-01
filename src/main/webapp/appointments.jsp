@@ -529,12 +529,11 @@
 
                             </button>
 
-                            <a href="billing?appointmentId=<%= appointment.getAppointmentId() %>"
+                            <a href="<%= request.getContextPath() %>/invoice?appointmentId=<%= appointment.getAppointmentId() %>"
                                class="btn btn-sm btn-outline-success"
-                               title="Generate Bill">
+                               title="Generate or View Invoice">
 
                                 <i class="bi bi-receipt"></i>
-
                             </a>
 
                         </td>

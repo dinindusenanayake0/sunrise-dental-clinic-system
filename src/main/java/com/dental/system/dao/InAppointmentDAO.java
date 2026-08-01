@@ -20,4 +20,6 @@ public interface InAppointmentDAO {
 
     String generateNextAppointmentNumber();
 
+    boolean updateAppointmentStatus(int appointmentId, String status);
+
 }

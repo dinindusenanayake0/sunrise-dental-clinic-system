@@ -56,11 +56,7 @@ public class AppointmentDAO implements InAppointmentDAO {
     public List<Appointment> getAllAppointments() {
         List<Appointment> appointments = new ArrayList<>();
 
-        String sql = """
-            SELECT *
-            FROM appointments
-            ORDER BY appointment_id DESC
-            """;
+        String sql = "SELECT * FROM appointments ORDER BY appointment_id DESC";
 
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -98,6 +94,35 @@ public class AppointmentDAO implements InAppointmentDAO {
 
     @Override
     public Appointment getAppointmentById(int appointmentId) {
+
+        String sql = "SELECT * FROM appointments WHERE appointment_id = ?";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, appointmentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+
+                    return new Appointment(
+                            resultSet.getInt("appointment_id"),
+                            resultSet.getString("appointment_number"),
+                            resultSet.getInt("patient_id"),
+                            resultSet.getDate("appointment_date").toLocalDate(),
+                            resultSet.getTime("appointment_time").toLocalTime(),
+                            resultSet.getString("dentist_name"),
+                            resultSet.getString("treatment_type"),
+                            resultSet.getString("status"),
+                            resultSet.getString("notes")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve appointment by ID : " + e.getMessage());
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -111,13 +136,32 @@ public class AppointmentDAO implements InAppointmentDAO {
         return false;
     }
 
+
+    @Override
+    public boolean updateAppointmentStatus(int appointmentId, String status) {
+
+        String sql = "UPDATE appointments SET status = ? WHERE appointment_id = ?";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, status);
+            statement.setInt(2, appointmentId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Failed to update appointment status: : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     @Override
     public String generateNextAppointmentNumber() {
 
-        String sql = """
-            SELECT COALESCE(MAX(appointment_id), 0) + 1 AS next_id
-            FROM appointments
-            """;
+        String sql = "SELECT COALESCE(MAX(appointment_id), 0) + 1 AS next_id FROM appointments";
 
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
