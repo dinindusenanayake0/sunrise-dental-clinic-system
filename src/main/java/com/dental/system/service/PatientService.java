@@ -43,7 +43,10 @@ public class PatientService implements InPatientService {
 
     @Override
     public Patient getPatientById(int patientId) {
-        return null;
+        if (patientId <= 0) {
+            return null;
+        }
+        return inPatientDAO.getPatientById(patientId);
     }
 
     @Override

@@ -14,7 +14,7 @@ public class AppointmentService implements InAppointmentService {
     }
 
     @Override
-    public boolean addAppointment(Appointment appointment){
+    public boolean addAppointment(Appointment appointment) {
         if (appointment == null) {
             return false;
         }
@@ -81,6 +81,18 @@ public class AppointmentService implements InAppointmentService {
     @Override
     public boolean deleteAppointment(int appointmentId) {
         return appointmentDAO.deleteAppointment(appointmentId);
+    }
+
+    @Override
+    public boolean updateAppointmentStatus(int appointmentId, String status) {
+        if (appointmentId <= 0) {
+            return false;
+        }
+
+        if (status == null || status.trim().isEmpty()) {
+            return false;
+        }
+        return appointmentDAO.updateAppointmentStatus(appointmentId, status);
     }
 
 

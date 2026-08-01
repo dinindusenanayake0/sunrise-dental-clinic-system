@@ -29,7 +29,7 @@ public class PatientDAO implements InPatientDAO {
             statement.setString(7, patient.getAddress());
 
             return statement.executeUpdate() > 0;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Patient added failed..");
             e.printStackTrace();
         }
@@ -47,8 +47,8 @@ public class PatientDAO implements InPatientDAO {
 
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()){
-            while (resultSet.next()){
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
                 Patient patient = new Patient();
 
                 patient.setPatientId(resultSet.getInt("patient_id"));
@@ -62,7 +62,7 @@ public class PatientDAO implements InPatientDAO {
 
                 patients.add(patient);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Patients records loading failed...");
             e.printStackTrace();
         }
@@ -72,12 +72,41 @@ public class PatientDAO implements InPatientDAO {
 
     @Override
     public Patient getPatientById(int patientId) {
+
+        String sql = " SELECT * FROM patients WHERE patient_id = ? ";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, patientId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+
+                    return new Patient(
+                            resultSet.getInt("patient_id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            resultSet.getString("gender"),
+                            resultSet.getDate("date_of_birth").toLocalDate(),
+                            resultSet.getString("phone"),
+                            resultSet.getString("email"),
+                            resultSet.getString("address")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve patient by ID : " + e.getMessage());
+            e.printStackTrace();
+        }
         return null;
+
     }
 
     //Update patient details
     @Override
     public boolean updatePatient(Patient patient) {
+
         String sql = "UPDATE patients SET first_name = ?, last_name = ?, gender = ?, date_of_birth = ?, phone = ?, email = ?, address = ? WHERE patient_id = ? ";
 
         try (Connection connection = DBCon.getConnection();
@@ -94,7 +123,7 @@ public class PatientDAO implements InPatientDAO {
 
             return statement.executeUpdate() > 0;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Patient update failed..");
             e.printStackTrace();
         }
@@ -104,6 +133,7 @@ public class PatientDAO implements InPatientDAO {
     //Delete a patient
     @Override
     public boolean deletePatient(int patientId) {
+
         String sql = "DELETE FROM patients WHERE patient_id = ? ";
 
         try (Connection connection = DBCon.getConnection();
@@ -113,7 +143,7 @@ public class PatientDAO implements InPatientDAO {
 
             return statement.executeUpdate() > 0;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Patient delete failed..");
             e.printStackTrace();
         }
