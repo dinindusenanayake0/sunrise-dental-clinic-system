@@ -128,6 +128,67 @@ public class AppointmentDAO implements InAppointmentDAO {
 
     @Override
     public boolean updateAppointment(Appointment appointment) {
+
+        String sql = "UPDATE appointments SET patient_id = ?, appointment_date = ?, appointment_time = ?, dentist_name = ?, treatment_type = ?, status = ?, notes = ? WHERE appointment_id = ? ";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(
+                    1,
+                    appointment.getPatientId()
+            );
+
+            statement.setDate(
+                    2,
+                    Date.valueOf(
+                            appointment.getAppointmentDate()
+                    )
+            );
+
+            statement.setTime(
+                    3,
+                    Time.valueOf(
+                            appointment.getAppointmentTime()
+                    )
+            );
+
+            statement.setString(
+                    4,
+                    appointment.getDentistName()
+            );
+
+            statement.setString(
+                    5,
+                    appointment.getTreatmentType()
+            );
+
+            statement.setString(
+                    6,
+                    appointment.getStatus()
+            );
+
+            statement.setString(
+                    7,
+                    appointment.getNotes()
+            );
+
+            statement.setInt(
+                    8,
+                    appointment.getAppointmentId()
+            );
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Failed to update appointment: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
         return false;
     }
 

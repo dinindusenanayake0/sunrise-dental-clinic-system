@@ -75,6 +75,47 @@ public class AppointmentService implements InAppointmentService {
 
     @Override
     public boolean updateAppointment(Appointment appointment) {
+
+        if (appointment == null) {
+            return false;
+        }
+
+        if (appointment.getAppointmentId() <= 0) {
+            return false;
+        }
+
+        if (appointment.getPatientId() <= 0) {
+            return false;
+        }
+
+        if (appointment.getAppointmentNumber() == null ||
+                appointment.getAppointmentNumber().trim().isEmpty()) {
+            return false;
+        }
+
+        if (appointment.getAppointmentDate() == null) {
+            return false;
+        }
+
+        if (appointment.getAppointmentTime() == null) {
+            return false;
+        }
+
+        if (appointment.getDentistName() == null ||
+                appointment.getDentistName().trim().isEmpty()) {
+            return false;
+        }
+
+        if (appointment.getTreatmentType() == null ||
+                appointment.getTreatmentType().trim().isEmpty()) {
+            return false;
+        }
+
+        if (appointment.getStatus() == null ||
+                appointment.getStatus().trim().isEmpty()) {
+            appointment.setStatus("Scheduled");
+        }
+
         return appointmentDAO.updateAppointment(appointment);
     }
 
