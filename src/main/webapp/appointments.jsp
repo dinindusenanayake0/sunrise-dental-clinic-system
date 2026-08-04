@@ -19,6 +19,11 @@
 
     List<Appointment> appointments =
             (List<Appointment>) request.getAttribute("appointments");
+
+    Appointment editAppointment =
+            (Appointment) request.getAttribute("editAppointment");
+
+    boolean editMode = editAppointment != null;
 %>
 
 <!DOCTYPE html>
@@ -103,9 +108,13 @@
 
             <h5 class="mb-0">
 
-                <i class="bi bi-calendar-plus me-2"></i>
+                <i class="bi <%= editMode
+                        ? "bi-pencil-square"
+                        : "bi-calendar-plus" %> me-2"></i>
 
-                Register New Appointment
+                <%= editMode
+                        ? "Edit Appointment"
+                        : "Register New Appointment" %>
 
             </h5>
 
@@ -137,6 +146,16 @@
             <form action="appointments"
                   method="post">
 
+                <input type="hidden"
+                       name="formAction"
+                       value="<%= editAppointment != null ? "update" : "add" %>">
+
+                <% if (editAppointment != null) { %>
+                    <input type="hidden"
+                           name="appointmentId"
+                           value="<%= editAppointment.getAppointmentId() %>">
+                <% } %>
+
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
@@ -160,7 +179,11 @@
 
                             <% for (Patient patient : patients) { %>
 
-                            <option value="<%= patient.getPatientId() %>">
+                            <option value="<%= patient.getPatientId() %>"
+                                    <%= editMode &&
+                                        editAppointment.getPatientId() == patient.getPatientId()
+                                            ? "selected"
+                                            : "" %>>
 
                                 P<%= String.format("%04d", patient.getPatientId()) %>
                                 -
@@ -190,6 +213,9 @@
                                class="form-control"
                                id="appointmentDate"
                                name="appointmentDate"
+                               value="<%= editMode
+                                              ? editAppointment.getAppointmentDate()
+                                              : "" %>"
                                required>
 
                     </div>
@@ -209,6 +235,9 @@
                                class="form-control"
                                id="appointmentTime"
                                name="appointmentTime"
+                               value="<%= editMode
+                                              ? editAppointment.getAppointmentTime()
+                                              : "" %>"
                                required>
 
                     </div>
@@ -237,15 +266,27 @@
                                 Select a dentist
                             </option>
 
-                            <option value="Dr. Perera">
+                            <option value="Dr. Perera"
+                                    <%= editMode &&
+                                        "Dr. Perera".equals(editAppointment.getDentistName())
+                                            ? "selected"
+                                            : "" %>>
                                 Dr. Perera
                             </option>
 
-                            <option value="Dr. Silva">
+                            <option value="Dr. Silva"
+                                    <%= editMode &&
+                                        "Dr. Silva".equals(editAppointment.getDentistName())
+                                            ? "selected"
+                                            : "" %>>
                                 Dr. Silva
                             </option>
 
-                            <option value="Dr. Fernando">
+                            <option value="Dr. Fernando"
+                                    <%= editMode &&
+                                        "Dr. Fernando".equals(editAppointment.getDentistName())
+                                            ? "selected"
+                                            : "" %>>
                                 Dr. Fernando
                             </option>
 
@@ -273,31 +314,59 @@
                                 Select a treatment
                             </option>
 
-                            <option value="Dental Consultation">
+                            <option value="Dental Consultation"
+                                    <%= editMode &&
+                                        "Dental Consultation".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Dental Consultation
                             </option>
 
-                            <option value="Dental Cleaning">
+                            <option value="Dental Cleaning"
+                                    <%= editMode &&
+                                        "Dental Cleaning".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Dental Cleaning
                             </option>
 
-                            <option value="Tooth Filling">
+                            <option value="Tooth Filling"
+                                    <%= editMode &&
+                                        "Tooth Filling".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Tooth Filling
                             </option>
 
-                            <option value="Tooth Extraction">
+                            <option value="Tooth Extraction"
+                                    <%= editMode &&
+                                        "Tooth Extraction".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Tooth Extraction
                             </option>
 
-                            <option value="Root Canal Treatment">
+                            <option value="Root Canal Treatment"
+                                    <%= editMode &&
+                                        "Root Canal Treatment".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Root Canal Treatment
                             </option>
 
-                            <option value="Teeth Whitening">
+                            <option value="Teeth Whitening"
+                                    <%= editMode &&
+                                        "Teeth Whitening".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Teeth Whitening
                             </option>
 
-                            <option value="Dental Checkup">
+                            <option value="Dental Checkup"
+                                    <%= editMode &&
+                                        "Dental Checkup".equals(
+                                                editAppointment.getTreatmentType()
+                                        ) ? "selected" : "" %>>
                                 Dental Checkup
                             </option>
 
@@ -321,27 +390,53 @@
                               id="notes"
                               name="notes"
                               rows="3"
-                              placeholder="Enter additional appointment notes"></textarea>
+                              placeholder="Enter additional appointment notes"><%= editMode &&
+                                                editAppointment.getNotes() != null
+                                                    ? editAppointment.getNotes()
+                                                    : "" %></textarea>
 
                 </div>
 
                 <div class="d-flex justify-content-end">
 
-                    <button type="reset"
-                            class="btn btn-outline-secondary me-2">
+                    <div class="d-flex justify-content-end">
 
-                        Clear
+                        <% if (editMode) { %>
 
-                    </button>
+                        <a href="<%= request.getContextPath() %>/appointments"
+                           class="btn btn-outline-secondary me-2">
 
-                    <button type="submit"
-                            class="btn btn-primary">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Cancel Edit
 
-                        <i class="bi bi-calendar-check me-1"></i>
+                        </a>
 
-                        Register Appointment
+                        <% } else { %>
 
-                    </button>
+                        <button type="reset"
+                                class="btn btn-outline-secondary me-2">
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear
+
+                        </button>
+
+                        <% } %>
+
+                        <button type="submit"
+                                class="btn <%= editMode ? "btn-warning" : "btn-primary" %>">
+
+                            <i class="bi <%= editMode
+                                    ? "bi-check-circle"
+                                    : "bi-calendar-check" %> me-1"></i>
+
+                            <%= editMode
+                                    ? "Update Appointment"
+                                    : "Register Appointment" %>
+
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -509,12 +604,42 @@
 
                         <td>
 
+                            <% boolean isCancelled =
+                                    "Cancelled".equalsIgnoreCase(
+                                            appointment.getStatus()
+                                    ); %>
+
+                            <% if (isCancelled) { %>
+
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="Cancelled appointment cannot be edited"
+                                        disabled>
+
+                                    <i class="bi bi-pencil-square"></i>
+
+                                </button>
+
+                            <% } else { %>
+
+                                <a href="<%= request.getContextPath() %>/appointments?action=edit&id=<%= appointment.getAppointmentId() %>"
+                                   class="btn btn-sm btn-outline-warning"
+                                   title="Edit Appointment">
+
+                                    <i class="bi bi-pencil-square"></i>
+
+                                </a>
+
+                            <% } %>
+
+
                             <button type="button"
                                     class="btn btn-sm btn-outline-primary"
                                     title="View Appointment Details"
                                     data-bs-toggle="modal"
                                     data-bs-target="#viewAppointmentModal"
                                     onclick="loadAppointmentDetails(
+                                            '<%= appointment.getAppointmentId() %>',
                                             '<%= appointment.getAppointmentNumber() %>',
                                             '<%= patientName %>',
                                             '<%= appointment.getAppointmentDate() %>',
@@ -523,18 +648,35 @@
                                             '<%= appointment.getTreatmentType() %>',
                                             '<%= appointment.getStatus() %>',
                                             '<%= appointment.getNotes() == null ? "" : appointment.getNotes() %>'
-                                            )">
+                                    )">
 
                                 <i class="bi bi-eye"></i>
 
                             </button>
 
-                            <a href="<%= request.getContextPath() %>/invoice?appointmentId=<%= appointment.getAppointmentId() %>"
-                               class="btn btn-sm btn-outline-success"
-                               title="Generate or View Invoice">
 
-                                <i class="bi bi-receipt"></i>
-                            </a>
+                            <% if (isCancelled) { %>
+
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="Invoice cannot be generated for a cancelled appointment"
+                                        disabled>
+
+                                    <i class="bi bi-receipt"></i>
+
+                                </button>
+
+                            <% } else { %>
+
+                                <a href="<%= request.getContextPath() %>/invoice?appointmentId=<%= appointment.getAppointmentId() %>"
+                                   class="btn btn-sm btn-outline-success"
+                                   title="Generate or View Invoice">
+
+                                    <i class="bi bi-receipt"></i>
+
+                                </a>
+
+                            <% } %>
 
                         </td>
 
@@ -710,6 +852,15 @@
             </div>
 
             <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-danger"
+                        id="cancelAppointmentBtn"
+                        onclick="confirmCancelAppointment()">
+
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancel Appointment
+
+                </button>
 
                 <button type="button"
                         class="btn btn-secondary"
@@ -718,6 +869,7 @@
                     Close
 
                 </button>
+
 
             </div>
 
@@ -730,7 +882,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    let selectedAppointmentId = null;
+
     function loadAppointmentDetails(
+        appointmentId,
         appointmentNumber,
         patientName,
         appointmentDate,
@@ -740,6 +895,8 @@
         status,
         notes
     ) {
+
+        selectedAppointmentId = appointmentId;
 
         document.getElementById("viewAppointmentNumber").textContent =
             appointmentNumber;
@@ -781,6 +938,49 @@
             '">' +
             status +
             '</span>';
+
+        const cancelButton =
+            document.getElementById("cancelAppointmentBtn");
+
+        if (status.toLowerCase() === "scheduled") {
+            cancelButton.classList.remove("d-none");
+        } else {
+            cancelButton.classList.add("d-none");
+        }
+    }
+
+</script>
+
+<script>
+    function confirmCancelAppointment() {
+
+        if (!selectedAppointmentId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Appointment',
+                text: 'Appointment ID was not found.',
+                confirmButtonColor: '#0d6efd'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Cancel Appointment?',
+            text: 'This appointment will be marked as cancelled.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Cancel',
+            cancelButtonText: 'No'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                window.location.href =
+                    '<%= request.getContextPath() %>/appointments?action=cancel&id='
+                    + selectedAppointmentId;
+            }
+        });
     }
 </script>
 
@@ -789,7 +989,10 @@
     const appointmentDate =
         document.getElementById("appointmentDate");
 
-    if (appointmentDate) {
+    const editMode =
+        <%= editMode %>;
+
+    if (appointmentDate && !editMode) {
 
         const today =
             new Date().toISOString().split("T")[0];
@@ -854,7 +1057,48 @@
 </script>
 
 
-<% if ("true".equals(request.getParameter("success"))) { %>
+<% if ("added".equals(request.getParameter("success"))) { %>
+<% if ("updated".equals(request.getParameter("success"))) { %>
+
+<script>
+    function confirmCancelAppointment() {
+
+        if (!selectedAppointmentId) {
+            return;
+        }
+
+        Swal.fire({
+            title: 'Cancel Appointment?',
+            text: 'This appointment will be marked as cancelled.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Cancel',
+            cancelButtonText: 'No'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                window.location.href =
+                    '<%= request.getContextPath() %>/appointments?action=cancel&id='
+                    + selectedAppointmentId;
+            }
+        });
+    }
+</script>
+
+<script>
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Appointment Updated!',
+        text: 'The appointment has been updated successfully.',
+        confirmButtonColor: '#0d6efd'
+    });
+
+</script>
+
+<% } %>
 
 <script>
 
@@ -894,6 +1138,30 @@
 </script>
 
 <% } %>
+<% if ("true".equals(request.getParameter("cancelSuccess"))) { %>
 
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Appointment Cancelled',
+        text: 'The appointment has been cancelled successfully.',
+        confirmButtonColor: '#0d6efd'
+    });
+</script>
+
+<% } %>
+
+<% if ("true".equals(request.getParameter("cancelError"))) { %>
+
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Cancellation Failed',
+        text: 'The appointment could not be cancelled.',
+        confirmButtonColor: '#0d6efd'
+    });
+</script>
+
+<% } %>
 </body>
 </html>

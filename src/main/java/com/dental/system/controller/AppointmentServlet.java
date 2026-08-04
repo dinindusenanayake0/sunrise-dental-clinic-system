@@ -37,8 +37,84 @@ public class AppointmentServlet extends HttpServlet {
                          HttpServletResponse response)
             throws ServletException, IOException {
 
+        String action = request.getParameter("action");
+        String idValue = request.getParameter("id");
+
+        if ("cancel".equals(action) && idValue != null) {
+
+            try {
+                int appointmentId = Integer.parseInt(idValue);
+
+                Appointment appointment =
+                        appointmentService.getAppointmentById(appointmentId);
+
+                if (appointment == null ||
+                        !"Scheduled".equalsIgnoreCase(
+                                appointment.getStatus()
+                        )) {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?cancelError=true"
+                    );
+                    return;
+                }
+
+                boolean cancelled =
+                        appointmentService.updateAppointmentStatus(
+                                appointmentId,
+                                "Cancelled"
+                        );
+
+                if (cancelled) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?cancelSuccess=true"
+                    );
+                } else {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?cancelError=true"
+                    );
+                }
+
+                return;
+
+            } catch (NumberFormatException e) {
+                response.sendRedirect(
+                        request.getContextPath()
+                                + "/appointments?cancelError=true"
+                );
+                return;
+            }
+        }
+
+
+        if ("edit".equalsIgnoreCase(action)) {
+
+            try {
+                int appointmentId =
+                        Integer.parseInt(request.getParameter("id"));
+
+                Appointment editAppointment =
+                        appointmentService.getAppointmentById(appointmentId);
+
+                if (editAppointment != null) {
+                    request.setAttribute(
+                            "editAppointment",
+                            editAppointment
+                    );
+                }
+
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         List<Patient> patients =
                 patientService.getAllPatients();
+
 
         List<Appointment> appointments =
                 appointmentService.getAllAppointments();
@@ -53,6 +129,7 @@ public class AppointmentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
             int patientId = Integer.parseInt(request.getParameter("patientId"));
             LocalDate appointmentDate = LocalDate.parse(request.getParameter("appointmentDate"));
@@ -60,6 +137,112 @@ public class AppointmentServlet extends HttpServlet {
             String dentistName = request.getParameter("dentistName");
             String treatmentType = request.getParameter("treatmentType");
             String notes = request.getParameter("notes");
+            String formAction = request.getParameter("formAction");
+
+            if ("cancel".equalsIgnoreCase(formAction)) {
+
+                int appointmentId = Integer.parseInt(
+                        request.getParameter("appointmentId")
+                );
+
+                Appointment existingAppointment =
+                        appointmentService.getAppointmentById(appointmentId);
+
+                if (existingAppointment == null) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?error=notFound"
+                    );
+                    return;
+                }
+
+                if ("Cancelled".equalsIgnoreCase(
+                        existingAppointment.getStatus()
+                )) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?error=alreadyCancelled"
+                    );
+                    return;
+                }
+
+                boolean cancelled =
+                        appointmentService.updateAppointmentStatus(
+                                appointmentId,
+                                "Cancelled"
+                        );
+
+                if (cancelled) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?success=cancelled"
+                    );
+                } else {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?error=cancelFailed"
+                    );
+                }
+
+                return;
+            }
+
+            if ("update".equalsIgnoreCase(formAction)) {
+
+                int appointmentId =
+                        Integer.parseInt(
+                                request.getParameter("appointmentId")
+                        );
+
+                Appointment existingAppointment =
+                        appointmentService.getAppointmentById(appointmentId);
+
+                if (existingAppointment == null) {
+
+                    if ("Cancelled".equalsIgnoreCase(
+                            existingAppointment.getStatus()
+                    )) {
+                        response.sendRedirect(
+                                request.getContextPath()
+                                        + "/appointments?error=cancelledEdit"
+                        );
+                        return;
+                    }
+
+                    response.sendRedirect(
+                            "appointments?error=notFound"
+                    );
+                    return;
+                }
+
+                Appointment appointment =
+                        new Appointment(
+                                appointmentId,
+                                existingAppointment.getAppointmentNumber(),
+                                patientId,
+                                appointmentDate,
+                                appointmentTime,
+                                dentistName,
+                                treatmentType,
+                                existingAppointment.getStatus(),
+                                notes
+                        );
+
+                boolean updated =
+                        appointmentService.updateAppointment(appointment);
+
+                if (updated) {
+                    response.sendRedirect(
+                            "appointments?success=updated"
+                    );
+                } else {
+                    response.sendRedirect(
+                            "appointments?error=updateFailed"
+                    );
+                }
+
+                return;
+            }
 
             Appointment appointment = new Appointment(
                     0, null, patientId, appointmentDate,
