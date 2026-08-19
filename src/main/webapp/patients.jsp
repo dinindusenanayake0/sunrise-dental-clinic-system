@@ -38,33 +38,70 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- Styles -->
+    <style>
+        .patient-table {
+            min-width: 1100px;
+        }
+
+        .patient-table th,
+        .patient-table td {
+            vertical-align: middle;
+        }
+
+        .patient-table th {
+            white-space: nowrap;
+        }
+
+        .patient-table .patient-id-column {
+            width: 90px;
+        }
+
+        .patient-table .name-column {
+            min-width: 150px;
+        }
+
+        .patient-table .gender-column {
+            width: 90px;
+        }
+
+        .patient-table .dob-column {
+            min-width: 120px;
+            white-space: nowrap;
+        }
+
+        .patient-table .phone-column {
+            min-width: 120px;
+            white-space: nowrap;
+        }
+
+        .patient-table .email-column {
+            min-width: 220px;
+        }
+
+        .patient-table .address-column {
+            min-width: 260px;
+            max-width: 320px;
+            white-space: normal;
+        }
+
+        .patient-table .action-column {
+            width: 90px;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
 
-<!-- Navbar -->
-<nav class="navbar navbar-dark bg-primary shadow-sm">
+<jsp:include page="/components/sidebar.jsp"/>
 
-    <div class="container">
-
-        <a class="navbar-brand fw-bold"
-           href="dashboard.jsp">
-
-            Sunrise Dental Clinic
-        </a>
-
-        <a href="logout"
-           class="btn btn-outline-light">
-
-            Logout
-        </a>
-
-    </div>
-
-</nav>
+<div class="main-content">
 
 <!-- Main container -->
-<div class="container py-5">
+<div class="container-fluid py-4 px-4">
 
     <!-- Page heading -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -167,24 +204,20 @@
             <!-- Patient table -->
             <div class="table-responsive">
 
-                <table class="table table-hover align-middle"
+                <table class="table table-hover align-middle patient-table"
                        id="patientTable">
 
                     <thead class="table-primary">
-
                     <tr>
-
-                        <th>Patient ID</th>
-                        <th>Name</th>
-                        <th>Gender</th>
-                        <th>Date of Birth</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Address</th>
-                        <th>Action</th>
-
+                        <th class="patient-id-column">Patient ID</th>
+                        <th class="name-column">Name</th>
+                        <th class="gender-column">Gender</th>
+                        <th class="dob-column">Date of Birth</th>
+                        <th class="phone-column">Phone</th>
+                        <th class="email-column">Email</th>
+                        <th class="address-column">Address</th>
+                        <th class="action-column">Action</th>
                     </tr>
-
                     </thead>
 
                     <tbody>
@@ -195,30 +228,28 @@
 
                         <tr>
 
-                            <td>
+                            <td class="patient-id-column">
                                 <%= patient.getPatientId() %>
                             </td>
 
-                            <td>
-
+                            <td class="name-column">
                                 <%= patient.getFirstName() %>
                                 <%= patient.getLastName() %>
-
                             </td>
 
-                            <td>
+                            <td class="gender-column">
                                 <%= patient.getGender() %>
                             </td>
 
-                            <td>
+                            <td class="dob-column">
                                 <%= patient.getDateOfBirth() %>
                             </td>
 
-                            <td>
+                            <td class="phone-column">
                                 <%= patient.getPhone() %>
                             </td>
 
-                            <td>
+                            <td class="email-column">
 
                                 <%= patient.getEmail() == null ||
                                         patient.getEmail().trim().isEmpty()
@@ -227,17 +258,14 @@
 
                             </td>
 
-                            <td>
-
+                            <td class="address-column">
                                 <%= patient.getAddress() == null ||
                                         patient.getAddress().trim().isEmpty()
                                         ? "-"
                                         : patient.getAddress() %>
-
                             </td>
 
-                            <td>
-
+                            <td class="action-column">
                                 <!-- Edit button -->
                                 <button type="button"
                                         class="btn btn-sm btn-warning"
@@ -532,7 +560,7 @@
     </div>
 
 </div>
-
+</div>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
