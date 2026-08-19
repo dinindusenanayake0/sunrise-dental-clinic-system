@@ -50,31 +50,11 @@
 
 <body class="bg-light">
 
-<nav class="navbar navbar-dark bg-primary shadow-sm">
+<jsp:include page="/components/sidebar.jsp"/>
 
-    <div class="container">
+<div class="main-content">
 
-        <a href="dashboard.jsp"
-           class="navbar-brand fw-bold">
-
-            Sunrise Dental Clinic
-
-        </a>
-
-        <a href="logout"
-           class="btn btn-outline-light">
-
-            <i class="bi bi-box-arrow-right me-1"></i>
-
-            Logout
-
-        </a>
-
-    </div>
-
-</nav>
-
-<div class="container py-5">
+<div class="container py-4 px-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -89,16 +69,6 @@
             </p>
 
         </div>
-
-        <a href="dashboard.jsp"
-           class="btn btn-secondary">
-
-            <i class="bi bi-arrow-left me-1"></i>
-
-            Dashboard
-
-        </a>
-
     </div>
 
 
@@ -877,6 +847,7 @@
 
     </div>
 
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
