@@ -149,7 +149,7 @@
 
     <nav class="sidebar-menu">
 
-        <a href="<%= contextPath %>/dashboard.jsp"
+        <a href="<%= contextPath %>/dashboard"
            class="sidebar-link
            <%= currentPage.contains("dashboard") ? "active" : "" %>">
 
