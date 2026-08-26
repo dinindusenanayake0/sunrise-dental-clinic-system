@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.dental.system.model.User" %>
 
 <%
     String currentPage = request.getRequestURI();
     String contextPath = request.getContextPath();
+
+    User sidebarUser = (User) session.getAttribute("loggedUser");
 %>
 
 <style>
@@ -195,6 +198,20 @@
             Reports
 
         </a>
+
+        <% if (sidebarUser != null &&
+                "Administrator".equalsIgnoreCase(sidebarUser.getRole())) { %>
+
+        <a href="<%= contextPath %>/users"
+           class="sidebar-link
+           <%= currentPage.contains("users") ? "active" : "" %>">
+
+            <i class="bi bi-person-gear"></i>
+            Manage Staff
+
+        </a>
+
+        <% } %>
 
         <a href="<%= contextPath %>/help.jsp"
            class="sidebar-link

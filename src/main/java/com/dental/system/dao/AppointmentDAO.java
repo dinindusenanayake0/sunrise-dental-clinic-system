@@ -89,6 +89,46 @@ public class AppointmentDAO implements InAppointmentDAO {
 
     @Override
     public Appointment getAppointmentByNumber(String appointmentNumber) {
+
+        String sql =
+                "SELECT * FROM appointments WHERE appointment_number = ?";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(
+                    1,
+                    appointmentNumber
+            );
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    return new Appointment(
+                            resultSet.getInt("appointment_id"),
+                            resultSet.getString("appointment_number"),
+                            resultSet.getInt("patient_id"),
+                            resultSet.getDate("appointment_date").toLocalDate(),
+                            resultSet.getTime("appointment_time").toLocalTime(),
+                            resultSet.getString("dentist_name"),
+                            resultSet.getString("treatment_type"),
+                            resultSet.getString("status"),
+                            resultSet.getString("notes")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Failed to retrieve appointment by number: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
         return null;
     }
 

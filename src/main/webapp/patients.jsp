@@ -118,13 +118,15 @@
 
         </div>
 
-        <a href="add-patient.jsp"
-           class="btn btn-primary">
+        <button type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addPatientModal">
 
             <i class="bi bi-person-plus me-1"></i>
 
             Add Patient
-        </a>
+        </button>
 
     </div>
 
@@ -334,15 +336,184 @@
 
             </div>
 
-            <!-- Back button -->
-            <a href="dashboard.jsp"
-               class="btn btn-secondary mt-3">
+        </div>
 
-                <i class="bi bi-arrow-left me-1"></i>
+    </div>
 
-                Back to Dashboard
+</div>
 
-            </a>
+<div class="modal fade"
+     id="addPatientModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form action="patients"
+                  method="post"
+                  id="addPatientForm">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+
+                        <i class="bi bi-person-plus me-2"></i>
+
+                        Add New Patient
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                First Name
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   name="firstName"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Last Name
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   name="lastName"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Gender
+                            </label>
+
+                            <select class="form-select"
+                                    name="gender"
+                                    required>
+
+                                <option value="">
+                                    Select Gender
+                                </option>
+
+                                <option value="Male">
+                                    Male
+                                </option>
+
+                                <option value="Female">
+                                    Female
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Date of Birth
+                            </label>
+
+                            <input type="date"
+                                   class="form-control"
+                                   name="dateOfBirth"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Phone
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   name="phone"
+                                   maxlength="10"
+                                   pattern="[0-9]{10}"
+                                   required>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            <input type="email"
+                                   class="form-control"
+                                   name="email">
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Address
+                        </label>
+
+                        <textarea class="form-control"
+                                  name="address"
+                                  rows="3"></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-save me-1"></i>
+
+                        Save Patient
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
@@ -363,7 +534,7 @@
             <form action="patients"
                   method="post">
 
-                <!-- Modal heading -->
+
                 <div class="modal-header">
 
                     <h5 class="modal-title">
@@ -382,7 +553,7 @@
 
                 </div>
 
-                <!-- Modal body -->
+
                 <div class="modal-body">
 
                     <input type="hidden"
@@ -395,7 +566,7 @@
 
                     <div class="row">
 
-                        <!-- First name -->
+
                         <div class="col-md-6 mb-3">
 
                             <label for="editFirstName"
@@ -412,7 +583,7 @@
 
                         </div>
 
-                        <!-- Last name -->
+
                         <div class="col-md-6 mb-3">
 
                             <label for="editLastName"
@@ -433,7 +604,7 @@
 
                     <div class="row">
 
-                        <!-- Gender -->
+
                         <div class="col-md-6 mb-3">
 
                             <label for="editGender"
@@ -459,7 +630,7 @@
 
                         </div>
 
-                        <!-- Date of birth -->
+
                         <div class="col-md-6 mb-3">
 
                             <label for="editDateOfBirth"
@@ -480,7 +651,7 @@
 
                     <div class="row">
 
-                        <!-- Phone -->
+
                         <div class="col-md-6 mb-3">
 
                             <label for="editPhone"
@@ -497,7 +668,7 @@
 
                         </div>
 
-                        <!-- Email -->
+
                         <div class="col-md-6 mb-3">
 
                             <label for="editEmail"
@@ -515,7 +686,7 @@
 
                     </div>
 
-                    <!-- Address -->
+
                     <div class="mb-3">
 
                         <label for="editAddress"
@@ -533,7 +704,7 @@
 
                 </div>
 
-                <!-- Modal footer -->
+
                 <div class="modal-footer">
 
                     <button type="button"
@@ -561,7 +732,7 @@
 
 </div>
 </div>
-<!-- Bootstrap JS -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Search function -->
@@ -736,7 +907,40 @@
 
     });
 
+
+    const addPatientModal =
+        document.getElementById("addPatientModal");
+
+    if (addPatientModal) {
+
+        addPatientModal.addEventListener(
+            "hidden.bs.modal",
+            function () {
+
+                document.getElementById(
+                    "addPatientForm"
+                ).reset();
+            }
+        );
+    }
+
 </script>
+
+<% } %>
+
+<!-- Patient added success popup -->
+<% if ("true".equals(request.getParameter("added"))) { %>
+
+        <script>
+
+            Swal.fire({
+                icon: "success",
+                title: "Patient Added",
+                text: "Patient has been added successfully.",
+                confirmButtonColor: "#0d6efd"
+            });
+
+        </script>
 
 <% } %>
 

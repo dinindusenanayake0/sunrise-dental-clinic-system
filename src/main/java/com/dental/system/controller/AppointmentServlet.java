@@ -48,10 +48,17 @@ public class AppointmentServlet extends HttpServlet {
                 Appointment appointment =
                         appointmentService.getAppointmentById(appointmentId);
 
-                if (appointment == null ||
-                        !"Scheduled".equalsIgnoreCase(
-                                appointment.getStatus()
-                        )) {
+                if (appointment == null) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?cancelError=true"
+                    );
+                    return;
+                }
+
+                if (!"Scheduled".equalsIgnoreCase(
+                        appointment.getStatus()
+                )) {
 
                     response.sendRedirect(
                             request.getContextPath()
@@ -59,6 +66,7 @@ public class AppointmentServlet extends HttpServlet {
                     );
                     return;
                 }
+
 
                 boolean cancelled =
                         appointmentService.updateAppointmentStatus(
@@ -131,12 +139,6 @@ public class AppointmentServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            int patientId = Integer.parseInt(request.getParameter("patientId"));
-            LocalDate appointmentDate = LocalDate.parse(request.getParameter("appointmentDate"));
-            LocalTime appointmentTime = LocalTime.parse(request.getParameter("appointmentTime"));
-            String dentistName = request.getParameter("dentistName");
-            String treatmentType = request.getParameter("treatmentType");
-            String notes = request.getParameter("notes");
             String formAction = request.getParameter("formAction");
 
             if ("cancel".equalsIgnoreCase(formAction)) {
@@ -156,12 +158,12 @@ public class AppointmentServlet extends HttpServlet {
                     return;
                 }
 
-                if ("Cancelled".equalsIgnoreCase(
+                if (!"Scheduled".equalsIgnoreCase(
                         existingAppointment.getStatus()
                 )) {
                     response.sendRedirect(
                             request.getContextPath()
-                                    + "/appointments?error=alreadyCancelled"
+                                    + "/appointments?error=cancelFailed"
                     );
                     return;
                 }
@@ -187,6 +189,13 @@ public class AppointmentServlet extends HttpServlet {
                 return;
             }
 
+            int patientId = Integer.parseInt(request.getParameter("patientId"));
+            LocalDate appointmentDate = LocalDate.parse(request.getParameter("appointmentDate"));
+            LocalTime appointmentTime = LocalTime.parse(request.getParameter("appointmentTime"));
+            String dentistName = request.getParameter("dentistName");
+            String treatmentType = request.getParameter("treatmentType");
+            String notes = request.getParameter("notes");
+
             if ("update".equalsIgnoreCase(formAction)) {
 
                 int appointmentId =
@@ -199,18 +208,19 @@ public class AppointmentServlet extends HttpServlet {
 
                 if (existingAppointment == null) {
 
-                    if ("Cancelled".equalsIgnoreCase(
-                            existingAppointment.getStatus()
-                    )) {
-                        response.sendRedirect(
-                                request.getContextPath()
-                                        + "/appointments?error=cancelledEdit"
-                        );
-                        return;
-                    }
-
                     response.sendRedirect(
                             "appointments?error=notFound"
+                    );
+                    return;
+                }
+
+                if (!"Scheduled".equalsIgnoreCase(
+                        existingAppointment.getStatus()
+                )) {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/appointments?error=cancelledEdit"
                     );
                     return;
                 }
