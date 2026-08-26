@@ -61,7 +61,7 @@ public class InvoiceServlet extends HttpServlet {
             Appointment appointment = appointmentService.getAppointmentById(appointmentId);
 
             if (appointment == null) {
-                response.sendRedirect(request.getContextPath() + "appointments?invoiceError=appointmentNotFound");
+                response.sendRedirect(request.getContextPath() + "/appointments?invoiceError=appointmentNotFound");
                 return;
             }
 
@@ -69,14 +69,14 @@ public class InvoiceServlet extends HttpServlet {
 
             if (patient == null) {
 
-                response.sendRedirect(request.getContextPath() + "appointments?invoiceError=patientNotFound");
+                response.sendRedirect(request.getContextPath() + "/appointments?invoiceError=patientNotFound");
                 return;
             }
             request.setAttribute("appointment", appointment);
             request.setAttribute("patient", patient);
             request.getRequestDispatcher("/billing.jsp").forward(request, response);
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "appointments?invoiceError=invalidId");
+            response.sendRedirect(request.getContextPath() + "/appointments?invoiceError=invalidId");
         }
     }
 
@@ -87,6 +87,18 @@ public class InvoiceServlet extends HttpServlet {
 
         try {
             int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+
+            Appointment appointment =
+                    appointmentService.getAppointmentById(appointmentId);
+
+            if (appointment == null) {
+                response.sendRedirect(
+                        request.getContextPath()
+                                + "/appointments?invoiceError=appointmentNotFound"
+                );
+                return;
+            }
+
             BigDecimal doctorFee = parseAmount(request.getParameter("doctorFee"));
             BigDecimal hospitalFee = parseAmount(request.getParameter("hospitalFee"));
             BigDecimal additionalFee = parseAmount(request.getParameter("additionalFee"));
@@ -128,7 +140,7 @@ public class InvoiceServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println("Invoice creation error: " + e.getMessage());
             e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "appointments?invoiceError=true");
+            response.sendRedirect(request.getContextPath() + "/appointments?invoiceError=true");
         }
     }
 

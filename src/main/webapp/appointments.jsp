@@ -1027,37 +1027,22 @@
     });
 </script>
 
-
-<% if ("added".equals(request.getParameter("success"))) { %>
-<% if ("updated".equals(request.getParameter("success"))) { %>
+<% if ("cancelled".equals(request.getParameter("success"))) { %>
 
 <script>
-    function confirmCancelAppointment() {
 
-        if (!selectedAppointmentId) {
-            return;
-        }
+    Swal.fire({
+        icon: 'success',
+        title: 'Appointment Cancelled!',
+        text: 'The appointment has been cancelled successfully.',
+        confirmButtonColor: '#0d6efd'
+    });
 
-        Swal.fire({
-            title: 'Cancel Appointment?',
-            text: 'This appointment will be marked as cancelled.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, Cancel',
-            cancelButtonText: 'No'
-        }).then((result) => {
-
-            if (result.isConfirmed) {
-                window.location.href =
-                    '<%= request.getContextPath() %>/appointments?action=cancel&id='
-                    + selectedAppointmentId;
-            }
-        });
-    }
 </script>
 
+<% } %>
+
+<% if ("updated".equals(request.getParameter("success"))) { %>
 <script>
 
     Swal.fire({
@@ -1071,6 +1056,7 @@
 
 <% } %>
 
+<% if ("true".equals(request.getParameter("success"))) { %>
 <script>
 
     Swal.fire({

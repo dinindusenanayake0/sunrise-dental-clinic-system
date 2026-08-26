@@ -1,6 +1,7 @@
 package com.dental.system.dao;
 
 import com.dental.system.model.User;
+import java.util.List;
 
 public interface InUserDAO {
 
@@ -14,4 +15,7 @@ public interface InUserDAO {
 
     boolean deleteUser(int userId);
 
+    List<User> getAllUsers();
+
+    User getUserByUsername(String username);
 }

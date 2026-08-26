@@ -66,8 +66,8 @@ public class InvoiceService implements InInvoiceService {
 
         String paymentStatus = determinePaymentStatus(totalAmount, amountPaid);
 
-        if (invoice.getPaymentMethod() == null || invoice.getPaymentMethod().trim().isEmpty()) {
-            System.out.println("Payment method is empty.");
+        if (!isValidPaymentMethod(invoice.getPaymentMethod())) {
+            System.out.println("Invalid payment method.");
             return false;
         }
 
@@ -113,4 +113,18 @@ public class InvoiceService implements InInvoiceService {
     public List<Invoice> getAllInvoices() {
         return invoiceDAO.getAllInvoices();
     }
+
+    private boolean isValidPaymentMethod(String paymentMethod) {
+
+        if (paymentMethod == null) {
+            return false;
+        }
+
+        return "Cash".equalsIgnoreCase(paymentMethod.trim())
+                || "Card".equalsIgnoreCase(paymentMethod.trim())
+                || "Bank Transfer".equalsIgnoreCase(paymentMethod.trim());
+    }
+
+
+
 }

@@ -31,7 +31,7 @@ public class PatientServlet extends HttpServlet {
 
         String action = request.getParameter("action");
 
-
+        if (!"update".equals(action)) {
         //Add patient
         try {
             String firstName = request.getParameter("firstName");
@@ -54,8 +54,8 @@ public class PatientServlet extends HttpServlet {
             );
             boolean added = patientService.addPatient(patient);
 
-            if (added) {
-                response.sendRedirect("add-patient.jsp?success=true");
+            if (added) {response.sendRedirect(
+                    request.getContextPath() + "/patients?added=true");
             } else {
                 request.setAttribute("error", "Patient added failed...");
                 request.getRequestDispatcher("/add-patient.jsp").forward(request, response);
@@ -64,7 +64,7 @@ public class PatientServlet extends HttpServlet {
             request.setAttribute("error", "Invalid Patient details.");
             request.getRequestDispatcher("/add-patient.jsp");
         }
-
+        }
 
         //Update patient
         if ("update".equals(action)) {
@@ -81,7 +81,7 @@ public class PatientServlet extends HttpServlet {
                 String address = request.getParameter("address");
 
                 Patient patient = new Patient(
-                        0,
+                        patientId,
                         firstName,
                         lastName,
                         gender,
@@ -111,6 +111,7 @@ public class PatientServlet extends HttpServlet {
 
         String action = request.getParameter("action");
 
+        if (!"delete".equals(action)) {
 
         //View all patients
         List<Patient> patients = patientService.getAllPatients();
@@ -119,6 +120,8 @@ public class PatientServlet extends HttpServlet {
 
         request.getRequestDispatcher("/patients.jsp").forward(request, response);
 
+            return;
+        }
 
         //Delete patient
         if ("delete".equals(action)) {
@@ -134,7 +137,7 @@ public class PatientServlet extends HttpServlet {
                     response.sendRedirect("patients?deleted=false");
                 }
             } catch (Exception e) {
-                response.sendRedirect("patients?deleted=true");
+                response.sendRedirect("patients?deleted=false");
             }
             return;
         }

@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
 
         if (user != null) {
             request.getSession().setAttribute("loggedUser", user);
-            response.sendRedirect("dashboard.jsp");
+            response.sendRedirect(request.getContextPath() + "/dashboard");
         } else {
             request.setAttribute("error", "Invalid username or password");
             request.getRequestDispatcher("login.jsp").forward(request, response);

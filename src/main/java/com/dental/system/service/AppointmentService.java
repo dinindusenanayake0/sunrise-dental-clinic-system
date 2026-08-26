@@ -4,6 +4,7 @@ import com.dental.system.dao.InAppointmentDAO;
 import com.dental.system.model.Appointment;
 
 import java.util.List;
+import java.time.LocalDate;
 
 public class AppointmentService implements InAppointmentService {
 
@@ -23,7 +24,9 @@ public class AppointmentService implements InAppointmentService {
             return false;
         }
 
-        if (appointment.getAppointmentDate() == null) {
+        if (!isValidAppointmentDate(
+                appointment.getAppointmentDate()
+        )) {
             return false;
         }
 
@@ -93,7 +96,9 @@ public class AppointmentService implements InAppointmentService {
             return false;
         }
 
-        if (appointment.getAppointmentDate() == null) {
+        if (!isValidAppointmentDate(
+                appointment.getAppointmentDate()
+        )) {
             return false;
         }
 
@@ -113,7 +118,11 @@ public class AppointmentService implements InAppointmentService {
 
         if (appointment.getStatus() == null ||
                 appointment.getStatus().trim().isEmpty()) {
+
             appointment.setStatus("Scheduled");
+
+        } else if (!isValidStatus(appointment.getStatus())) {
+            return false;
         }
 
         return appointmentDAO.updateAppointment(appointment);
@@ -130,11 +139,35 @@ public class AppointmentService implements InAppointmentService {
             return false;
         }
 
-        if (status == null || status.trim().isEmpty()) {
+        if (!isValidStatus(status)) {
             return false;
         }
         return appointmentDAO.updateAppointmentStatus(appointmentId, status);
     }
 
+    private boolean isValidAppointmentDate(
+            LocalDate appointmentDate
+    ) {
 
+        if (appointmentDate == null) {
+            return false;
+        }
+
+        return !appointmentDate.isBefore(
+                LocalDate.now()
+        );
+    }
+
+    private boolean isValidStatus(
+            String status
+    ) {
+
+        if (status == null) {
+            return false;
+        }
+
+        return "Scheduled".equalsIgnoreCase(status.trim())
+                || "Completed".equalsIgnoreCase(status.trim())
+                || "Cancelled".equalsIgnoreCase(status.trim());
+    }
 }

@@ -4,6 +4,7 @@ import com.dental.system.dao.InPatientDAO;
 import com.dental.system.model.Patient;
 
 import java.util.List;
+import java.time.LocalDate;
 
 public class PatientService implements InPatientService {
 
@@ -24,13 +25,15 @@ public class PatientService implements InPatientService {
         if (patient.getLastName() == null || patient.getLastName().trim().isEmpty()){
             return false;
         }
-        if (patient.getGender() == null || patient.getGender().trim().isEmpty()){
+        if (!isValidGender(patient.getGender())) {
             return false;
         }
-        if (patient.getDateOfBirth() == null){
+
+        if (!isValidDateOfBirth(patient.getDateOfBirth())) {
             return false;
         }
-        if (patient.getPhone() == null || patient.getPhone().trim().isEmpty()){
+
+        if (!isValidEmail(patient.getEmail())) {
             return false;
         }
         return inPatientDAO.addPatient(patient);
@@ -60,13 +63,13 @@ public class PatientService implements InPatientService {
         if (patient.getLastName() == null || patient.getLastName().trim().isEmpty()){
             return false;
         }
-        if (patient.getGender() == null || patient.getGender().trim().isEmpty()){
+        if (!isValidGender(patient.getGender())) {
             return false;
         }
-        if (patient.getDateOfBirth() == null){
+        if (!isValidDateOfBirth(patient.getDateOfBirth())) {
             return false;
         }
-        if (patient.getPhone() == null || patient.getPhone().trim().isEmpty()){
+        if (!isValidEmail(patient.getEmail())) {
             return false;
         }
         return inPatientDAO.updatePatient(patient);
@@ -78,5 +81,44 @@ public class PatientService implements InPatientService {
             return false;
         }
         return inPatientDAO.deletePatient(patientId);
+    }
+
+    private boolean isValidPhone(String phone) {
+
+        if (phone == null) {
+            return false;
+        }
+
+        return phone.trim().matches("\\d{10}");
+    }
+
+    private boolean isValidGender(String gender) {
+
+        if (gender == null) {
+            return false;
+        }
+
+        return "Male".equalsIgnoreCase(gender.trim())
+                || "Female".equalsIgnoreCase(gender.trim())
+                || "Other".equalsIgnoreCase(gender.trim());
+    }
+
+    private boolean isValidDateOfBirth(LocalDate dateOfBirth) {
+
+        if (dateOfBirth == null) {
+            return false;
+        }
+
+        return !dateOfBirth.isAfter(LocalDate.now());
+    }
+
+    private boolean isValidEmail(String email) {
+
+        if (email == null || email.trim().isEmpty()) {
+            return true;
+        }
+
+        return email.trim()
+                .matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }
 }
