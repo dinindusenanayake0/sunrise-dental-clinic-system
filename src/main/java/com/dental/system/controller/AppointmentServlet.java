@@ -32,6 +32,7 @@ public class AppointmentServlet extends HttpServlet {
         this.patientService = new PatientService(new PatientDAO());
     }
 
+    // Handle appointment requests
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -40,6 +41,7 @@ public class AppointmentServlet extends HttpServlet {
         String action = request.getParameter("action");
         String idValue = request.getParameter("id");
 
+        // Cancel an appointment
         if ("cancel".equals(action) && idValue != null) {
 
             try {
@@ -98,6 +100,7 @@ public class AppointmentServlet extends HttpServlet {
         }
 
 
+        // Edit appointment
         if ("edit".equalsIgnoreCase(action)) {
 
             try {
@@ -134,6 +137,8 @@ public class AppointmentServlet extends HttpServlet {
                 .forward(request, response);
     }
 
+
+    // Handle appointment submit
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -141,6 +146,7 @@ public class AppointmentServlet extends HttpServlet {
         try {
             String formAction = request.getParameter("formAction");
 
+            // Appointment cancellation
             if ("cancel".equalsIgnoreCase(formAction)) {
 
                 int appointmentId = Integer.parseInt(
@@ -196,6 +202,8 @@ public class AppointmentServlet extends HttpServlet {
             String treatmentType = request.getParameter("treatmentType");
             String notes = request.getParameter("notes");
 
+
+            // Update appointment
             if ("update".equalsIgnoreCase(formAction)) {
 
                 int appointmentId =
@@ -254,6 +262,8 @@ public class AppointmentServlet extends HttpServlet {
                 return;
             }
 
+
+            // Create a new appointment
             Appointment appointment = new Appointment(
                     0, null, patientId, appointmentDate,
                     appointmentTime, dentistName, treatmentType, "Scheduled", notes);

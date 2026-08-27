@@ -24,6 +24,7 @@ public class InvoiceListServlet extends HttpServlet {
                 new InvoiceService(new InvoiceDAO());
     }
 
+    // Load all invoices
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -32,6 +33,7 @@ public class InvoiceListServlet extends HttpServlet {
         List<Invoice> invoices =
                 invoiceService.getAllInvoices();
 
+        // Send invoice data to JSP
         request.setAttribute("invoices", invoices);
 
         request.getRequestDispatcher("/invoices.jsp")

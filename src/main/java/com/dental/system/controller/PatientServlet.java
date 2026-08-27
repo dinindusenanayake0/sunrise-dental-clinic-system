@@ -25,6 +25,7 @@ public class PatientServlet extends HttpServlet {
         this.patientService = new PatientService(new PatientDAO());
     }
 
+    // Handle patient submit
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,8 +33,10 @@ public class PatientServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if (!"update".equals(action)) {
+
         //Add patient
         try {
+            String nic = request.getParameter("nic");
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String gender = request.getParameter("gender");
@@ -52,6 +55,19 @@ public class PatientServlet extends HttpServlet {
                     email,
                     address
             );
+
+            patient.setNic(nic);
+
+            Patient existingPatient =
+                    patientService.getPatientByNic(nic);
+
+            if (existingPatient != null) {
+                response.sendRedirect(
+                        request.getContextPath() + "/patients?nicExists=true"
+                );
+                return;
+            }
+
             boolean added = patientService.addPatient(patient);
 
             if (added) {response.sendRedirect(
@@ -72,6 +88,7 @@ public class PatientServlet extends HttpServlet {
             try {
                 int patientId = Integer.parseInt(request.getParameter("patientId"));
 
+                String nic = request.getParameter("nic");
                 String firstName = request.getParameter("firstName");
                 String lastName = request.getParameter("lastName");
                 String gender = request.getParameter("gender");
@@ -90,6 +107,21 @@ public class PatientServlet extends HttpServlet {
                         email,
                         address
                 );
+
+                patient.setNic(nic);
+
+                Patient existingPatient =
+                        patientService.getPatientByNic(nic);
+
+                if (existingPatient != null &&
+                        existingPatient.getPatientId() != patientId) {
+
+                    response.sendRedirect(
+                            request.getContextPath() + "/patients?nicExists=true"
+                    );
+                    return;
+                }
+
                 boolean updated = patientService.updatePatient(patient);
 
                 if (updated) {
@@ -105,6 +137,7 @@ public class PatientServlet extends HttpServlet {
     }
 
 
+    // Handle patient page requests
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -113,7 +146,7 @@ public class PatientServlet extends HttpServlet {
 
         if (!"delete".equals(action)) {
 
-        //View all patients
+        //Load all patients
         List<Patient> patients = patientService.getAllPatients();
 
         request.setAttribute("patients", patients);

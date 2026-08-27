@@ -52,8 +52,10 @@
 
 <jsp:include page="/components/sidebar.jsp"/>
 
+
 <div class="main-content">
 
+<!-- Appointment management section -->
 <div class="container py-4 px-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -113,6 +115,8 @@
 
             <% } else { %>
 
+
+            <!-- Appointment form -->
             <form action="appointments"
                   method="post">
 
@@ -419,6 +423,7 @@
     </div>
 
 
+    <!-- Registered appointments list -->
     <div class="card border-0 shadow-sm">
 
         <div class="card-header bg-white py-3">
@@ -628,19 +633,20 @@
                             <% if (isCancelled) { %>
 
                                 <button type="button"
-                                        class="btn btn-sm btn-outline-secondary"
-                                        title="Invoice cannot be generated for a cancelled appointment"
-                                        disabled>
+                                            class="btn btn-sm btn-outline-secondary"
+                                            title="Invoice cannot be generated for a cancelled appointment"
+                                            disabled>
 
-                                    <i class="bi bi-receipt"></i>
+                                        <i class="bi bi-receipt"></i>
 
-                                </button>
+                                    </button>
 
                             <% } else { %>
 
                                 <a href="<%= request.getContextPath() %>/invoice?appointmentId=<%= appointment.getAppointmentId() %>"
                                    class="btn btn-sm btn-outline-success"
-                                   title="Generate or View Invoice">
+                                   title="Generate or View Invoice"
+                                   target="_blank">
 
                                     <i class="bi bi-receipt"></i>
 
@@ -922,6 +928,7 @@
 
 </script>
 
+<!-- Appointment status messages -->
 <script>
     function confirmCancelAppointment() {
 

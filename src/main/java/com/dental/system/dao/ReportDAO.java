@@ -16,6 +16,7 @@ import java.util.List;
 
 public class ReportDAO implements InReportDAO {
 
+    // Get appointment count by status
     @Override
     public int getAppointmentCountByStatus(String status) {
 
@@ -43,6 +44,8 @@ public class ReportDAO implements InReportDAO {
         return 0;
     }
 
+
+    // Get appointments by date range
     @Override
     public List<Appointment> getAppointmentsByDateRange(
             LocalDate startDate,
@@ -116,6 +119,8 @@ public class ReportDAO implements InReportDAO {
         return appointments;
     }
 
+
+    // Calculate total revenue
     @Override
     public BigDecimal getTotalRevenue() {
 
@@ -140,6 +145,8 @@ public class ReportDAO implements InReportDAO {
         return BigDecimal.ZERO;
     }
 
+
+    // Get all invoices
     @Override
     public List<Invoice> getAllInvoices() {
 

@@ -24,6 +24,7 @@ public class AppointmentApiServlet extends HttpServlet {
         this.appointmentService = new AppointmentService(new AppointmentDAO());
     }
 
+    // Handle appointment API requests
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -106,6 +107,7 @@ public class AppointmentApiServlet extends HttpServlet {
             return;
         }
 
+        // Get all appointments
         List<Appointment> appointments = appointmentService.getAllAppointments();
 
         PrintWriter out = response.getWriter();
@@ -180,6 +182,7 @@ public class AppointmentApiServlet extends HttpServlet {
         out.flush();
     }
 
+    // Escape special characters for JSON
     private String escapeJson(String value) {
 
         if (value == null) {return "";}

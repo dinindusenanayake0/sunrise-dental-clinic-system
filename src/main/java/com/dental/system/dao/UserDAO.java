@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 public class UserDAO implements InUserDAO {
 
+    // login
     @Override
     public User login(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
@@ -37,6 +38,8 @@ public class UserDAO implements InUserDAO {
         return null;
     }
 
+
+    // Add a new user
     @Override
     public boolean addUser(User user) {
 
@@ -59,6 +62,8 @@ public class UserDAO implements InUserDAO {
         return false;
     }
 
+
+    // Get user by ID
     @Override
     public User getUserById(int userId) {
 
@@ -92,6 +97,8 @@ public class UserDAO implements InUserDAO {
         return null;
     }
 
+
+    // Get all users
     @Override
     public List<User> getAllUsers() {
 
@@ -123,6 +130,7 @@ public class UserDAO implements InUserDAO {
         return users;
     }
 
+    // Get user by username
     @Override
     public User getUserByUsername(String username) {
 
@@ -156,6 +164,8 @@ public class UserDAO implements InUserDAO {
         return null;
     }
 
+
+    // Update user details
     @Override
     public boolean updateUser(User user) {
 
@@ -179,6 +189,8 @@ public class UserDAO implements InUserDAO {
         return false;
     }
 
+
+    // Delete a user
     @Override
     public boolean deleteUser(int userId) {
 

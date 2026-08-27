@@ -16,8 +16,6 @@ public interface InAppointmentService {
 
     boolean updateAppointment(Appointment appointment);
 
-    boolean deleteAppointment(int appointmentId);
-
     boolean updateAppointmentStatus(int appointmentId, String status);
 
 }

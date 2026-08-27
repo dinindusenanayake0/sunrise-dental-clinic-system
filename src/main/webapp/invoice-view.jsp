@@ -1011,22 +1011,6 @@
 
             <div class="d-flex justify-content-between align-items-center no-print">
 
-                <% if (!fromInvoices) { %>
-
-                <a href="<%= request.getContextPath() %>/appointments"
-                   class="btn btn-secondary">
-
-                    <i class="bi bi-arrow-left"></i>
-                    Back to Appointments
-
-                </a>
-
-                <% } else { %>
-
-                <span></span>
-
-                <% } %>
-
                 <button type="button"
                         class="btn btn-primary"
                         onclick="window.print()">

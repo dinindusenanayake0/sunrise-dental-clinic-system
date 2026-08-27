@@ -22,6 +22,7 @@
 </head>
 <body class="bg-light">
 
+<!-- Add patient section -->
 <div class="container mt-5">
 
     <div class="card shadow">
@@ -32,18 +33,22 @@
 
         <div class="card-body">
 
+            <!-- Success message -->
             <% if(request.getParameter("success") != null){ %>
                 <div class="alert alert-success">
                     Patient added successfully.
                 </div>
             <% } %>
 
+            <!-- Error message -->
             <% if(request.getAttribute("error") != null){ %>
                 <div class="alert alert-danger">
                     <%= request.getAttribute("error") %>
                 </div>
             <% } %>
 
+
+            <!-- Patient registration form -->
             <form action="patients" method="post">
 
                 <div class="row">

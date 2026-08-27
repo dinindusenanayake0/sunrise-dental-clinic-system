@@ -10,5 +10,7 @@ public interface InInvoiceService {
 
     Invoice getInvoiceByAppointmentId(int appointmentId);
 
+    boolean updateInvoice(Invoice invoice);
+
     List<Invoice> getAllInvoices();
 }

@@ -16,8 +16,6 @@ public interface InAppointmentDAO {
 
     boolean updateAppointment(Appointment appointment);
 
-    boolean deleteAppointment(int appointmentId);
-
     String generateNextAppointmentNumber();
 
     boolean updateAppointmentStatus(int appointmentId, String status);

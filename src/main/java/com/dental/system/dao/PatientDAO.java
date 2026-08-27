@@ -13,20 +13,21 @@ import java.util.List;
 
 public class PatientDAO implements InPatientDAO {
 
-    //Add patient to the database
+    // Add a new patient
     @Override
     public boolean addPatient(Patient patient) {
-        String sql = "INSERT INTO patients(first_name, last_name, gender, date_of_birth, phone, email, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO patients(nic, first_name, last_name, gender, date_of_birth, phone, email, address) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, patient.getFirstName());
-            statement.setString(2, patient.getLastName());
-            statement.setString(3, patient.getGender());
-            statement.setDate(4, Date.valueOf(patient.getDateOfBirth()));
-            statement.setString(5, patient.getPhone());
-            statement.setString(6, patient.getEmail());
-            statement.setString(7, patient.getAddress());
+            statement.setString(1, patient.getNic());
+            statement.setString(2, patient.getFirstName());
+            statement.setString(3, patient.getLastName());
+            statement.setString(4, patient.getGender());
+            statement.setDate(5, Date.valueOf(patient.getDateOfBirth()));
+            statement.setString(6, patient.getPhone());
+            statement.setString(7, patient.getEmail());
+            statement.setString(8, patient.getAddress());
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -52,6 +53,7 @@ public class PatientDAO implements InPatientDAO {
                 Patient patient = new Patient();
 
                 patient.setPatientId(resultSet.getInt("patient_id"));
+                patient.setNic(resultSet.getString("nic"));
                 patient.setFirstName(resultSet.getString("first_name"));
                 patient.setLastName(resultSet.getString("last_name"));
                 patient.setGender(resultSet.getString("gender"));
@@ -70,6 +72,8 @@ public class PatientDAO implements InPatientDAO {
 
     }
 
+
+    // Get patient by ID
     @Override
     public Patient getPatientById(int patientId) {
 
@@ -83,7 +87,7 @@ public class PatientDAO implements InPatientDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
 
-                    return new Patient(
+                    Patient patient = new Patient(
                             resultSet.getInt("patient_id"),
                             resultSet.getString("first_name"),
                             resultSet.getString("last_name"),
@@ -93,6 +97,10 @@ public class PatientDAO implements InPatientDAO {
                             resultSet.getString("email"),
                             resultSet.getString("address")
                     );
+
+                    patient.setNic(resultSet.getString("nic"));
+
+                    return patient;
                 }
             }
         } catch (SQLException e) {
@@ -103,23 +111,65 @@ public class PatientDAO implements InPatientDAO {
 
     }
 
-    //Update patient details
-    @Override
-    public boolean updatePatient(Patient patient) {
 
-        String sql = "UPDATE patients SET first_name = ?, last_name = ?, gender = ?, date_of_birth = ?, phone = ?, email = ?, address = ? WHERE patient_id = ? ";
+    //Get Patinet by NIC
+    @Override
+    public Patient getPatientByNic(String nic) {
+
+        String sql = "SELECT * FROM patients WHERE nic = ?";
 
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, patient.getFirstName());
-            statement.setString(2, patient.getLastName());
-            statement.setString(3, patient.getGender());
-            statement.setDate(4, Date.valueOf(patient.getDateOfBirth()));
-            statement.setString(5, patient.getPhone());
-            statement.setString(6, patient.getEmail());
-            statement.setString(7, patient.getAddress());
-            statement.setInt(8, patient.getPatientId());
+            statement.setString(1, nic);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    Patient patient = new Patient(
+                            resultSet.getInt("patient_id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            resultSet.getString("gender"),
+                            resultSet.getDate("date_of_birth").toLocalDate(),
+                            resultSet.getString("phone"),
+                            resultSet.getString("email"),
+                            resultSet.getString("address")
+                    );
+
+                    patient.setNic(resultSet.getString("nic"));
+
+                    return patient;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve patient by NIC : " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    //Update patient details
+    @Override
+    public boolean updatePatient(Patient patient) {
+
+        String sql = "UPDATE patients SET nic = ?, first_name = ?, last_name = ?, gender = ?, date_of_birth = ?, phone = ?, email = ?, address = ? WHERE patient_id = ?";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, patient.getNic());
+            statement.setString(2, patient.getFirstName());
+            statement.setString(3, patient.getLastName());
+            statement.setString(4, patient.getGender());
+            statement.setDate(5, Date.valueOf(patient.getDateOfBirth()));
+            statement.setString(6, patient.getPhone());
+            statement.setString(7, patient.getEmail());
+            statement.setString(8, patient.getAddress());
+            statement.setInt(9, patient.getPatientId());
 
             return statement.executeUpdate() > 0;
 
@@ -129,6 +179,7 @@ public class PatientDAO implements InPatientDAO {
         }
         return false;
     }
+
 
     //Delete a patient
     @Override

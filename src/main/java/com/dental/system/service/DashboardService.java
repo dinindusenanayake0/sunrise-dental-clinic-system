@@ -13,16 +13,19 @@ public class DashboardService implements InDashboardService {
         this.dashboardDAO = dashboardDAO;
     }
 
+    // Get total patient count
     @Override
     public int getTotalPatients() {
         return dashboardDAO.getTotalPatients();
     }
 
+    // Get total appointment count
     @Override
     public int getTotalAppointments() {
         return dashboardDAO.getTotalAppointments();
     }
 
+    // Get appointment count by status
     @Override
     public int getAppointmentCountByStatus(String status) {
         if (status == null || status.trim().isEmpty()) {
@@ -32,11 +35,13 @@ public class DashboardService implements InDashboardService {
         return dashboardDAO.getAppointmentCountByStatus(status);
     }
 
+    // Get total revenue
     @Override
     public BigDecimal getTotalRevenue() {
         return dashboardDAO.getTotalRevenue();
     }
 
+    // Get recent appointments
     @Override
     public List<Appointment> getRecentAppointments() {
         return dashboardDAO.getRecentAppointments();

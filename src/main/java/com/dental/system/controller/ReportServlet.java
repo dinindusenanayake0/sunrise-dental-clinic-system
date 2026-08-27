@@ -26,6 +26,8 @@ public class ReportServlet extends HttpServlet {
         this.reportService = new ReportService(new ReportDAO());
     }
 
+
+    // Load report data
     @Override
     protected void doGet(
             HttpServletRequest request,

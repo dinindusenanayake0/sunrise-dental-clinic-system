@@ -50,6 +50,8 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
+    <!-- Report styles -->
     <style>
 
         .report-card {
@@ -141,6 +143,7 @@
         </div>
 
 
+        <!-- Appointment status summary -->
         <div id="appointmentStatusReport"
              class="card section-card shadow-sm mb-4">
 
@@ -346,6 +349,7 @@
         </div>
 
 
+        <!-- Appointment date range filter -->
         <div class="card section-card shadow-sm mb-4">
 
             <div class="card-body p-4">
@@ -432,6 +436,7 @@
         </div>
 
 
+        <!-- Date range report form -->
         <% if (filteredAppointments != null) { %>
 
         <div id="appointmentDateReport"
@@ -599,6 +604,7 @@
         <% } %>
 
 
+        <!-- Filtered appointment report -->
         <div id="invoiceReport"
              class="card section-card shadow-sm">
 
@@ -810,7 +816,7 @@
 
                 </div>
 
-
+                <!-- Billing and invoice report -->
                 <div class="table-responsive">
 
                     <table class="table table-hover align-middle mb-0">

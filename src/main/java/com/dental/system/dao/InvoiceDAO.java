@@ -55,6 +55,7 @@ public class InvoiceDAO implements InInvoiceDAO {
     }
 
 
+    // Get all invoices
     @Override
     public List<Invoice> getAllInvoices() {
 
@@ -150,16 +151,19 @@ public class InvoiceDAO implements InInvoiceDAO {
         return invoices;
     }
 
+    // Get invoice by ID
     @Override
     public Invoice getInvoiceById(int invoiceId) {
         return null;
     }
 
+    // Get invoice by invoice number
     @Override
     public Invoice getInvoiceByNumber(String invoiceNumber) {
         return null;
     }
 
+    // Get invoice by appointment ID
     @Override
     public Invoice getInvoiceByAppointmentId(int appointmentId) {
 
@@ -206,16 +210,43 @@ public class InvoiceDAO implements InInvoiceDAO {
 
     }
 
+
+    // Update invoice payment details
     @Override
     public boolean updateInvoice(Invoice invoice) {
+
+        String sql = "UPDATE invoices SET amount_paid = ?, balance_amount = ?, payment_method = ?, payment_status = ?, remarks = ? WHERE invoice_id = ? ";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setBigDecimal(1, invoice.getAmountPaid());
+            statement.setBigDecimal(2, invoice.getBalanceAmount());
+            statement.setString(3, invoice.getPaymentMethod());
+            statement.setString(4, invoice.getPaymentStatus());
+            statement.setString(5, invoice.getRemarks());
+            statement.setInt(6, invoice.getInvoiceId());
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Failed to update invoice: "
+                            + e.getMessage()
+            );
+            e.printStackTrace();
+        }
+
         return false;
     }
 
+    // Delete invoice
     @Override
     public boolean deleteInvoice(int invoiceId) {
         return false;
     }
 
+    // Generate the next invoice number
     @Override
     public String generateNextInvoiceNumber() {
 

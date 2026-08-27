@@ -8,6 +8,8 @@
     User sidebarUser = (User) session.getAttribute("loggedUser");
 %>
 
+
+<!-- Sidebar styles -->
 <style>
     :root {
         --sidebar-width: 260px;
@@ -60,6 +62,7 @@
         padding: 12px 14px;
         border-radius: 8px;
         margin-bottom: 6px;
+        font-size:14px;
         transition: 0.2s ease;
     }
 
@@ -150,6 +153,8 @@
 
     </div>
 
+
+    <!-- Sidebar links -->
     <nav class="sidebar-menu">
 
         <a href="<%= contextPath %>/dashboard"
@@ -224,6 +229,7 @@
 
     </nav>
 
+    <!-- footer -->
     <div class="sidebar-footer">
 
         <a href="<%= contextPath %>/logout"

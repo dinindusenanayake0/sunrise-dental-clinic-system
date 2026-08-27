@@ -17,6 +17,7 @@ public class ReportService implements InReportService {
         this.reportDAO = reportDAO;
     }
 
+    // Get appointment count by status
     @Override
     public int getAppointmentCountByStatus(String status) {
 
@@ -27,6 +28,7 @@ public class ReportService implements InReportService {
         return reportDAO.getAppointmentCountByStatus(status);
     }
 
+    // Get appointments by date range
     @Override
     public List<Appointment> getAppointmentsByDateRange(
             LocalDate startDate,
@@ -47,11 +49,13 @@ public class ReportService implements InReportService {
         );
     }
 
+    // Get total revenue
     @Override
     public BigDecimal getTotalRevenue() {
         return reportDAO.getTotalRevenue();
     }
 
+    // Get all invoices
     @Override
     public List<Invoice> getAllInvoices() {
         return reportDAO.getAllInvoices();

@@ -15,6 +15,7 @@ public class Appointment {
     private String status;
     private String notes;
 
+
     //Create Default Constructor
     public Appointment(){
     }

@@ -11,6 +11,8 @@ public interface InPatientDAO {
 
     Patient getPatientById(int patientId);
 
+    Patient getPatientByNic(String nic);
+
     boolean updatePatient(Patient patient);
 
     boolean deletePatient(int patientId);
