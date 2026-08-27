@@ -15,6 +15,7 @@ import java.util.List;
 
 public class DashboardDAO implements InDashboardDAO {
 
+    // Get total patient count
     @Override
     public int getTotalPatients() {
 
@@ -38,6 +39,8 @@ public class DashboardDAO implements InDashboardDAO {
         return 0;
     }
 
+
+    // Get total appointment count
     @Override
     public int getTotalAppointments() {
 
@@ -61,6 +64,8 @@ public class DashboardDAO implements InDashboardDAO {
         return 0;
     }
 
+
+    // Get appointment count by status
     @Override
     public int getAppointmentCountByStatus(String status) {
 
@@ -88,6 +93,8 @@ public class DashboardDAO implements InDashboardDAO {
         return 0;
     }
 
+
+    // Calculate total revenue
     @Override
     public BigDecimal getTotalRevenue() {
 
@@ -112,6 +119,8 @@ public class DashboardDAO implements InDashboardDAO {
         return BigDecimal.ZERO;
     }
 
+
+    // Get the latest five appointments
     @Override
     public List<Appointment> getRecentAppointments() {
 

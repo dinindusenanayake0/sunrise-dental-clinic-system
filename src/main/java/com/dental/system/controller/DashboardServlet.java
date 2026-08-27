@@ -25,6 +25,8 @@ public class DashboardServlet extends HttpServlet {
         this.dashboardService = new DashboardService(new DashboardDAO());
     }
 
+
+    // Load dashboard data
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,8 +43,10 @@ public class DashboardServlet extends HttpServlet {
 
         BigDecimal totalRevenue = dashboardService.getTotalRevenue();
 
+
         List<Appointment> recentAppointments = dashboardService.getRecentAppointments();
 
+        // Send dashboard data to JSP
         request.setAttribute("totalPatients", totalPatients);
         request.setAttribute("totalAppointments", totalAppointments);
         request.setAttribute("scheduledAppointments", scheduledAppointments);

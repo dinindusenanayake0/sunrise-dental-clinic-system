@@ -43,6 +43,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Manage staff styles -->
     <style>
 
         .staff-card {
@@ -284,6 +285,7 @@
 </div>
 
 
+<!-- Open add user modal -->
 <div class="modal fade"
      id="addUserModal"
      tabindex="-1">
@@ -416,7 +418,7 @@
 
 </div>
 
-
+<!-- Edit User Modal -->
 <div class="modal fade"
      id="editUserModal"
      tabindex="-1">
@@ -481,7 +483,7 @@
                                    id="editPassword"
                                    class="form-control"
                                    autocomplete="new-password"
-                                   placeholder="Leave blank to keep current password">
+                                   >
 
                             <button type="button"
                                     class="btn btn-outline-secondary password-toggle-btn"
@@ -498,7 +500,7 @@
                         </div>
 
                         <div class="form-text">
-                            Leave this blank if you do not want to change the password.
+                            Leave blank to keep current password
                         </div>
 
                     </div>
@@ -527,7 +529,7 @@
                         <div id="ownAccountMessage"
                              class="form-text d-none">
 
-                            You cannot change the role of your own account.
+                            Your role cannot be changed
 
                         </div>
 
@@ -566,7 +568,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
+<!-- Password visibility -->
 <script>
 
     function togglePasswordVisibility(
@@ -603,6 +605,7 @@
     }
 
 
+    <!-- Rest form -->
     function resetAddUserForm() {
 
         const form =
@@ -731,6 +734,7 @@
     }
 
 
+    <!-- Confirm user deletion -->
     function confirmDeleteUser(
             userId,
             username

@@ -14,6 +14,7 @@ public class AppointmentService implements InAppointmentService {
         this.appointmentDAO = appointmentDAO;
     }
 
+    // Add a appointment
     @Override
     public boolean addAppointment(Appointment appointment) {
         if (appointment == null) {
@@ -44,6 +45,7 @@ public class AppointmentService implements InAppointmentService {
             return false;
         }
 
+
         // Generate Appointment Number
         String appointmentNumber =
                 appointmentDAO.generateNextAppointmentNumber();
@@ -51,6 +53,7 @@ public class AppointmentService implements InAppointmentService {
             return false;
         }
         appointment.setAppointmentNumber(appointmentNumber);
+
 
         // Default Status
         if (appointment.getStatus() == null ||
@@ -61,21 +64,27 @@ public class AppointmentService implements InAppointmentService {
         return appointmentDAO.addAppointment(appointment);
     }
 
+    // Get all appointments
     @Override
     public List<Appointment> getAllAppointments() {
         return appointmentDAO.getAllAppointments();
     }
 
+
+    // Get appointment by number
     @Override
     public Appointment getAppointmentByNumber(String appointmentNumber) {
         return appointmentDAO.getAppointmentByNumber(appointmentNumber);
     }
 
+    // Get appointment by ID
     @Override
     public Appointment getAppointmentById(int appointmentId) {
         return appointmentDAO.getAppointmentById(appointmentId);
     }
 
+
+    // Update appointment
     @Override
     public boolean updateAppointment(Appointment appointment) {
 
@@ -128,11 +137,8 @@ public class AppointmentService implements InAppointmentService {
         return appointmentDAO.updateAppointment(appointment);
     }
 
-    @Override
-    public boolean deleteAppointment(int appointmentId) {
-        return appointmentDAO.deleteAppointment(appointmentId);
-    }
 
+    // Update appointment status
     @Override
     public boolean updateAppointmentStatus(int appointmentId, String status) {
         if (appointmentId <= 0) {
@@ -145,6 +151,8 @@ public class AppointmentService implements InAppointmentService {
         return appointmentDAO.updateAppointmentStatus(appointmentId, status);
     }
 
+
+    // Validate appointment date
     private boolean isValidAppointmentDate(
             LocalDate appointmentDate
     ) {
@@ -157,6 +165,8 @@ public class AppointmentService implements InAppointmentService {
                 LocalDate.now()
         );
     }
+
+
 
     private boolean isValidStatus(
             String status

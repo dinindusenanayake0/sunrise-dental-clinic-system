@@ -14,6 +14,7 @@ import java.sql.SQLException;
 
 public class AppointmentDAO implements InAppointmentDAO {
 
+    // Add a new appointment
     @Override
     public boolean addAppointment(Appointment appointment) {
 
@@ -52,6 +53,7 @@ public class AppointmentDAO implements InAppointmentDAO {
         return false;
     }
 
+    // Get all appointments
     @Override
     public List<Appointment> getAllAppointments() {
         List<Appointment> appointments = new ArrayList<>();
@@ -87,6 +89,7 @@ public class AppointmentDAO implements InAppointmentDAO {
         return appointments;
     }
 
+    // Get appointment by appointment number
     @Override
     public Appointment getAppointmentByNumber(String appointmentNumber) {
 
@@ -132,6 +135,7 @@ public class AppointmentDAO implements InAppointmentDAO {
         return null;
     }
 
+    // Get appointment by ID
     @Override
     public Appointment getAppointmentById(int appointmentId) {
 
@@ -166,6 +170,7 @@ public class AppointmentDAO implements InAppointmentDAO {
         return null;
     }
 
+    // Update appointment details
     @Override
     public boolean updateAppointment(Appointment appointment) {
 
@@ -232,12 +237,7 @@ public class AppointmentDAO implements InAppointmentDAO {
         return false;
     }
 
-    @Override
-    public boolean deleteAppointment(int appointmentId) {
-        return false;
-    }
-
-
+    // Update appointment status
     @Override
     public boolean updateAppointmentStatus(int appointmentId, String status) {
 
@@ -259,6 +259,7 @@ public class AppointmentDAO implements InAppointmentDAO {
     }
 
 
+    // Generate the next appointment number
     @Override
     public String generateNextAppointmentNumber() {
 

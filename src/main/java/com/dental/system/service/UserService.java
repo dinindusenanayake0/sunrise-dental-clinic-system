@@ -14,6 +14,7 @@ public class UserService implements InUserService {
         this.inUserDAO = inUserDAO;
     }
 
+    // Validate user login
     @Override
     public User login(String username, String password) {
 
@@ -26,7 +27,7 @@ public class UserService implements InUserService {
         return inUserDAO.login(username, password);
     }
 
-
+    // Add user
     @Override
     public boolean addUser(User user) {
 
@@ -70,6 +71,8 @@ public class UserService implements InUserService {
         return inUserDAO.addUser(user);
     }
 
+
+    // Get user by ID
     @Override
     public User getUserById(int userId) {
 
@@ -80,6 +83,8 @@ public class UserService implements InUserService {
         return inUserDAO.getUserById(userId);
     }
 
+
+    // Get all users
     @Override
     public List<User> getAllUsers() {
 
@@ -93,6 +98,8 @@ public class UserService implements InUserService {
         return users;
     }
 
+
+    // Update user
     @Override
     public boolean updateUser(User user) {
 
@@ -138,6 +145,8 @@ public class UserService implements InUserService {
         return inUserDAO.updateUser(user);
     }
 
+
+    // Delete user
     @Override
     public boolean deleteUser(int userId) {
 
@@ -148,6 +157,8 @@ public class UserService implements InUserService {
         return inUserDAO.deleteUser(userId);
     }
 
+
+    // Validate user role
     private boolean isValidRole(String role) {
 
         if (role == null) {

@@ -43,7 +43,8 @@
     <!-- Styles -->
     <style>
         .patient-table {
-            min-width: 1100px;
+            width: 100%;
+            table-layout: auto;
         }
 
         .patient-table th,
@@ -57,6 +58,10 @@
 
         .patient-table .patient-id-column {
             width: 90px;
+        }
+
+        .patient-table .nic-column {
+            min-width: 120px;
         }
 
         .patient-table .name-column {
@@ -78,13 +83,14 @@
         }
 
         .patient-table .email-column {
-            min-width: 220px;
+            max-width: 180px;
+            word-break: break-word;
         }
 
         .patient-table .address-column {
-            min-width: 260px;
-            max-width: 320px;
+            max-width: 220px;
             white-space: normal;
+            word-break: break-word;
         }
 
         .patient-table .action-column {
@@ -195,7 +201,7 @@
                         <input type="text"
                                id="patientSearch"
                                class="form-control"
-                               placeholder="Search by ID, name, phone or email">
+                               placeholder="Search by ID, NIC, name, phone or email">
 
                     </div>
 
@@ -211,7 +217,7 @@
 
                     <thead class="table-primary">
                     <tr>
-                        <th class="patient-id-column">Patient ID</th>
+                        <th class="nic-column">NIC</th>
                         <th class="name-column">Name</th>
                         <th class="gender-column">Gender</th>
                         <th class="dob-column">Date of Birth</th>
@@ -230,8 +236,8 @@
 
                         <tr>
 
-                            <td class="patient-id-column">
-                                <%= patient.getPatientId() %>
+                            <td class="nic-column">
+                                <%= patient.getNic() %>
                             </td>
 
                             <td class="name-column">
@@ -275,6 +281,7 @@
                                         data-bs-toggle="modal"
                                         data-bs-target="#editPatientModal"
                                         onclick="loadPatientData(
+                                                '<%= patient.getNic() %>',
                                                 '<%= patient.getPatientId() %>',
                                                 '<%= patient.getFirstName() %>',
                                                 '<%= patient.getLastName() %>',
@@ -311,7 +318,7 @@
 
                     <tr>
 
-                        <td colspan="8"
+                        <td colspan="9"
                             class="text-center text-muted py-4">
 
                             No patients found.
@@ -373,6 +380,26 @@
                 <div class="modal-body">
 
                     <div class="row">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    NIC
+                                </label>
+
+                                <input type="text"
+                                       class="form-control"
+                                       name="nic"
+                                       maxlength="12"
+                                       pattern="(\d{9}[VvXx]|\d{12})"
+                                       title="Enter a valid NIC: 9 digits followed by V/X, or 12 digits"
+                                       required>
+
+                            </div>
+
+                        </div>
 
                         <div class="col-md-6 mb-3">
 
@@ -563,6 +590,28 @@
                     <input type="hidden"
                            id="editPatientId"
                            name="patientId">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label for="editNic"
+                                   class="form-label">
+                                NIC
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="editNic"
+                                   name="nic"
+                                   maxlength="12"
+                                   pattern="(\d{9}[VvXx]|\d{12})"
+                                   title="Enter a valid NIC: 9 digits followed by V/X, or 12 digits"
+                                   required>
+
+                        </div>
+
+                    </div>
 
                     <div class="row">
 
@@ -794,6 +843,7 @@
 
     function loadPatientData(
         patientId,
+        nic,
         firstName,
         lastName,
         gender,
@@ -805,6 +855,9 @@
 
         document.getElementById("editPatientId").value =
             patientId;
+
+        document.getElementById("editNic").value =
+            nic;
 
         document.getElementById("editFirstName").value =
             firstName;
@@ -924,6 +977,20 @@
         );
     }
 
+</script>
+
+<% } %>
+
+<!-- Duplicate NIC -->
+<% if ("true".equals(request.getParameter("nicExists"))) { %>
+
+<script>
+    Swal.fire({
+        icon: "warning",
+        title: "Patient Already Registered",
+        text: "A patient with this NIC is already registered.",
+        confirmButtonColor: "#0d6efd"
+    });
 </script>
 
 <% } %>

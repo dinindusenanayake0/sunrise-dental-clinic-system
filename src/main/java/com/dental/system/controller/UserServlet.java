@@ -24,6 +24,8 @@ public class UserServlet extends HttpServlet {
         this.userService = new UserService(new UserDAO());
     }
 
+
+    // Load users
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -37,6 +39,8 @@ public class UserServlet extends HttpServlet {
 
         User loggedUser = (User) session.getAttribute("loggedUser");
 
+
+
         if (!"Administrator".equalsIgnoreCase(loggedUser.getRole())) {
 
             response.sendRedirect(request.getContextPath() + "/dashboard");
@@ -46,6 +50,9 @@ public class UserServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         String idValue = request.getParameter("id");
+
+
+
 
         if ("delete".equalsIgnoreCase(action) && idValue != null) {
 
@@ -90,6 +97,8 @@ public class UserServlet extends HttpServlet {
             }
         }
 
+
+
         List<User> users = userService.getAllUsers();
 
         request.setAttribute("users", users);
@@ -97,6 +106,8 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 
+
+    // Handle user submit
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -133,6 +144,8 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/users");
     }
 
+
+    //Add user
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String username = request.getParameter("username");
@@ -167,6 +180,8 @@ public class UserServlet extends HttpServlet {
         }
     }
 
+
+    //Update user
     private void updateUser(HttpServletRequest request, HttpServletResponse response, User loggedUser, HttpSession session) throws IOException {
 
         try {

@@ -2,6 +2,8 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="com.dental.system.model.Appointment" %>
 <%@ page import="com.dental.system.model.Patient" %>
+<%@ page import="com.dental.system.model.Invoice" %>
+
 
 <%
     HttpSession currentSession = request.getSession(false);
@@ -23,6 +25,13 @@
         response.sendRedirect("appointments?invoiceError=missingData");
         return;
     }
+%>
+
+<%
+    Invoice existingInvoice =
+            (Invoice) request.getAttribute("existingInvoice");
+
+    boolean paymentMode = existingInvoice != null;
 %>
 
 <!DOCTYPE html>
@@ -68,6 +77,7 @@
 
 </nav>
 
+<!-- Billing section -->
 <div class="container py-5">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -75,11 +85,13 @@
         <div>
 
             <h2 class="fw-bold mb-1">
-                Create Invoice
+                <%= paymentMode ? "Add Payment" : "Create Invoice" %>
             </h2>
 
             <p class="text-muted mb-0">
-                Review appointment details and enter payment information.
+                <%= paymentMode
+                        ? "Add a payment to the existing invoice."
+                        : "Review appointment details and enter payment information." %>
             </p>
 
         </div>
@@ -313,10 +325,12 @@
 
                 </div>
 
+                <!-- Invoice payment form -->
                 <div class="card-body p-4">
 
                     <form action="<%= request.getContextPath() %>/invoice"
-                          method="post">
+                          method="post"
+                          id="invoiceForm">
 
                         <input type="hidden"
                                name="appointmentId"
@@ -343,9 +357,12 @@
                                            class="form-control amount-field"
                                            id="doctorFee"
                                            name="doctorFee"
-                                           min="0"
+                                           min="0.01"
                                            step="0.01"
-                                           value="0.00"
+                                           value="<%= paymentMode
+                                                   ? existingInvoice.getDoctorFee()
+                                                   : "" %>"
+                                           <%= paymentMode ? "readonly" : "" %>
                                            required>
 
                                 </div>
@@ -371,9 +388,12 @@
                                            class="form-control amount-field"
                                            id="hospitalFee"
                                            name="hospitalFee"
-                                           min="0"
+                                           min="0.01"
                                            step="0.01"
-                                           value="0.00"
+                                           value="<%= paymentMode
+                                                   ? existingInvoice.getHospitalFee()
+                                                   : "" %>"
+                                           <%= paymentMode ? "readonly" : "" %>
                                            required>
 
                                 </div>
@@ -404,7 +424,11 @@
                                            name="additionalFee"
                                            min="0"
                                            step="0.01"
-                                           value="0.00">
+                                           value="<%= paymentMode
+                                                   ? existingInvoice.getAdditionalFee()
+                                                   : "0.00" %>"
+                                           <%= paymentMode ? "readonly" : "" %>
+                                           >
 
                                 </div>
 
@@ -430,7 +454,11 @@
                                            name="discount"
                                            min="0"
                                            step="0.01"
-                                           value="0.00">
+                                           value="<%= paymentMode
+                                                   ? existingInvoice.getDiscount()
+                                                   : "0.00" %>"
+                                           <%= paymentMode ? "readonly" : "" %>
+                                           >
 
                                 </div>
 
@@ -490,14 +518,50 @@
 
                         </div>
 
+                        <% if (paymentMode) { %>
+
+                        <div class="card bg-light border-0 mb-4">
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Invoice Number</span>
+                                    <span class="fw-semibold">
+                                        <%= existingInvoice.getInvoiceNumber() %>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Total Amount</span>
+                                    <span class="fw-semibold">
+                                        LKR <%= existingInvoice.getTotalAmount() %>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Already Paid</span>
+                                    <span class="fw-semibold text-success">
+                                        LKR <%= existingInvoice.getAmountPaid() %>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Current Balance</span>
+                                    <span class="fw-semibold text-danger">
+                                        LKR <%= existingInvoice.getBalanceAmount() %>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <% } %>
+
                         <div class="row">
 
                             <div class="col-md-6 mb-3">
 
-                                <label for="amountPaid"
-                                       class="form-label">
-
-                                    Amount Paid
+                                <label for="amountPaid" class="form-label">
+                                    <%= paymentMode ? "New Payment Amount" : "Amount Paid" %>
                                     <span class="text-danger">*</span>
                                 </label>
 
@@ -605,8 +669,13 @@
                             <button type="submit"
                                     class="btn btn-primary">
 
-                                <i class="bi bi-receipt-cutoff me-1"></i>
-                                Generate Invoice
+                                <i class="bi <%= paymentMode
+                                        ? "bi-cash-coin"
+                                        : "bi-receipt-cutoff" %> me-1"></i>
+
+                                <%= paymentMode
+                                        ? "Add Payment"
+                                        : "Generate Invoice" %>
                             </button>
 
                         </div>
@@ -657,8 +726,13 @@
 
         const paid = getNumber(amountPaid);
 
+        const previousPaid =
+            <%= paymentMode
+                    ? existingInvoice.getAmountPaid()
+                    : "0" %>;
+
         const balance = Math.max(
-            total - paid,
+            total - previousPaid - paid,
             0
         );
 
@@ -688,6 +762,34 @@
     calculateInvoicePreview();
 </script>
 
+<% if ("exceeded".equals(
+        request.getParameter("paymentError"))) { %>
+
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Invalid Payment Amount',
+        text: 'The payment amount cannot be greater than the remaining balance.',
+        confirmButtonColor: '#0d6efd'
+    });
+</script>
+
+<% } %>
+
+<% if ("true".equals(
+        request.getParameter("paymentError"))) { %>
+
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Payment Failed',
+        text: 'The payment could not be updated. Please try again.',
+        confirmButtonColor: '#0d6efd'
+    });
+</script>
+
+<% } %>
+
 <% if ("true".equals(request.getParameter("error")) ||
         request.getParameter("error") != null) { %>
 
@@ -699,8 +801,30 @@
         confirmButtonColor: '#0d6efd'
     });
 </script>
-
 <% } %>
 
+<script>
+    const invoiceForm = document.getElementById("invoiceForm");
+
+    invoiceForm.addEventListener("submit", function (event) {
+
+        if (!invoiceForm.checkValidity()) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const invoiceTab =
+            window.open("", "invoiceTab");
+
+        invoiceForm.target = "invoiceTab";
+        invoiceForm.submit();
+
+        setTimeout(function () {
+            window.location.href =
+                "<%= request.getContextPath() %>/appointments";
+        }, 500);
+    });
+</script>
 </body>
 </html>

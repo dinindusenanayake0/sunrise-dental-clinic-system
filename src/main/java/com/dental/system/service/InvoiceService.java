@@ -14,6 +14,7 @@ public class InvoiceService implements InInvoiceService {
         this.invoiceDAO = invoiceDAO;
     }
 
+    // Add invoice
     @Override
     public boolean addInvoice(Invoice invoice) {
         if (invoice == null) {
@@ -43,6 +44,10 @@ public class InvoiceService implements InInvoiceService {
         }
 
         BigDecimal subtotal = doctorFee.add(hospitalFee).add(additionalFee);
+
+        if (subtotal.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
 
         if (discount.compareTo(subtotal) > 0) {
             System.out.println("Discount exceeds subtotal.");
@@ -84,6 +89,8 @@ public class InvoiceService implements InInvoiceService {
         return invoiceDAO.addInvoice(invoice);
     }
 
+
+    // Convert null amount to zero
     private BigDecimal getSafeAmount(BigDecimal amount) {
         if (amount == null) {
             return BigDecimal.ZERO;
@@ -91,6 +98,7 @@ public class InvoiceService implements InInvoiceService {
         return amount;
     }
 
+    // Determine invoice payment status
     private String determinePaymentStatus(BigDecimal totalAmount, BigDecimal amountPaid) {
         if (amountPaid.compareTo(BigDecimal.ZERO) == 0) {
             return "Pending";
@@ -101,6 +109,7 @@ public class InvoiceService implements InInvoiceService {
         return "Paid";
     }
 
+    // Get invoice by appointment ID
     @Override
     public Invoice getInvoiceByAppointmentId(int appointmentId) {
         if (appointmentId <= 0) {
@@ -109,11 +118,56 @@ public class InvoiceService implements InInvoiceService {
         return invoiceDAO.getInvoiceByAppointmentId(appointmentId);
     }
 
+
+    // Update invoice
+    @Override
+    public boolean updateInvoice(Invoice invoice) {
+
+        if (invoice == null || invoice.getInvoiceId() <= 0) {
+            return false;
+        }
+
+        BigDecimal totalAmount =
+                getSafeAmount(invoice.getTotalAmount());
+
+        BigDecimal amountPaid =
+                getSafeAmount(invoice.getAmountPaid());
+
+        if (amountPaid.compareTo(BigDecimal.ZERO) < 0 ||
+                amountPaid.compareTo(totalAmount) > 0) {
+
+            return false;
+        }
+
+        if (!isValidPaymentMethod(invoice.getPaymentMethod())) {
+            return false;
+        }
+
+        BigDecimal balanceAmount =
+                totalAmount.subtract(amountPaid);
+
+        invoice.setAmountPaid(amountPaid);
+        invoice.setBalanceAmount(balanceAmount);
+
+        invoice.setPaymentStatus(
+                determinePaymentStatus(
+                        totalAmount,
+                        amountPaid
+                )
+        );
+
+        return invoiceDAO.updateInvoice(invoice);
+    }
+
+
+    // Get all invoices
     @Override
     public List<Invoice> getAllInvoices() {
         return invoiceDAO.getAllInvoices();
     }
 
+
+    // Validate payment method
     private boolean isValidPaymentMethod(String paymentMethod) {
 
         if (paymentMethod == null) {

@@ -34,6 +34,7 @@ public class InvoiceViewServlet extends HttpServlet {
         this.patientService = new PatientService(new PatientDAO());
     }
 
+    // Load invoice details
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -49,6 +50,7 @@ public class InvoiceViewServlet extends HttpServlet {
                 return;
             }
 
+
             Patient patient = patientService.getPatientById(appointment.getPatientId());
 
             if (patient == null){
@@ -56,6 +58,8 @@ public class InvoiceViewServlet extends HttpServlet {
                 return;
             }
 
+
+            // Send invoice data to JSP
             request.setAttribute("invoice", invoice);
             request.setAttribute("patient", patient);
             request.setAttribute("appointment", appointment);

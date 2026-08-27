@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class Patient {
 
     private int patientId;
+    private String nic;
     private String firstName;
     private String lastName;
     private String gender;
@@ -38,6 +39,13 @@ public class Patient {
         this.patientId = patientId;
     }
 
+    public String getNic() {
+        return nic;
+    }
+
+    public void setNic(String nic) {
+        this.nic = nic;
+    }
 
     public String getFirstName() {
         return firstName;

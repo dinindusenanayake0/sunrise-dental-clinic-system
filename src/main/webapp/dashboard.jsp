@@ -42,6 +42,8 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
+    <!-- Dashboard styles -->
     <style>
         .dashboard-card {
             border: none;
@@ -92,6 +94,8 @@
             Manage the dental clinic system using the options below.
             </p>
         </div>
+
+        <!-- Dashboard summary section -->
         <div class="row g-4">
             <div class="col-md-6 col-xl-4">
                 <div class="card dashboard-card shadow-sm">
@@ -102,7 +106,7 @@
                             <%= totalPatients %>
                             </h2>
                             <small class="text-muted">
-                            egistered patients
+                            Registered patients
                             </small>
                         </div>
 
@@ -324,7 +328,7 @@
                 </div>
             </div>
 
-
+            <!-- Quick actions -->
             <div class="col-xl-4">
 
                 <div class="card border-0 shadow-sm rounded-4 h-100">

@@ -36,6 +36,7 @@ public class InvoiceServlet extends HttpServlet {
         this.patientService = new PatientService(new PatientDAO());
     }
 
+    // Load invoice page
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,9 +54,25 @@ public class InvoiceServlet extends HttpServlet {
             Invoice existingInvoice =
                     invoiceService.getInvoiceByAppointmentId(appointmentId);
 
+
+            // Check existing invoice
             if (existingInvoice != null) {
-                response.sendRedirect(request.getContextPath() + "/invoice/view?appointmentId=" + appointmentId);
-                return;
+
+                if ("Paid".equalsIgnoreCase(
+                        existingInvoice.getPaymentStatus())) {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/invoice/view?appointmentId="
+                                    + appointmentId
+                    );
+                    return;
+                }
+
+                request.setAttribute(
+                        "existingInvoice",
+                        existingInvoice
+                );
             }
 
             Appointment appointment = appointmentService.getAppointmentById(appointmentId);
@@ -81,6 +98,7 @@ public class InvoiceServlet extends HttpServlet {
     }
 
 
+    // Handle invoice submit
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -107,6 +125,7 @@ public class InvoiceServlet extends HttpServlet {
             String paymentMethod = request.getParameter("paymentMethod");
             String remarks = request.getParameter("remarks");
 
+
             Invoice invoice = new Invoice();
 
             invoice.setAppointmentId(appointmentId);
@@ -123,11 +142,71 @@ public class InvoiceServlet extends HttpServlet {
                             invoice.getAppointmentId()
                     );
 
+
+            // Update payment existing invoice
             if (existingInvoice != null) {
-                response.sendRedirect(request.getContextPath() + "/invoice/view?appointmentId=" + invoice.getAppointmentId());
+
+                if ("Paid".equalsIgnoreCase(
+                        existingInvoice.getPaymentStatus())) {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/invoice/view?appointmentId="
+                                    + appointmentId
+                    );
+                    return;
+                }
+
+                BigDecimal previousPaid =
+                        existingInvoice.getAmountPaid() == null
+                                ? BigDecimal.ZERO
+                                : existingInvoice.getAmountPaid();
+
+                BigDecimal newTotalPaid =
+                        previousPaid.add(amountPaid);
+
+                if (newTotalPaid.compareTo(
+                        existingInvoice.getTotalAmount()) > 0) {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/invoice?appointmentId="
+                                    + appointmentId
+                                    + "&paymentError=exceeded"
+                    );
+                    return;
+                }
+
+                existingInvoice.setAmountPaid(newTotalPaid);
+                existingInvoice.setPaymentMethod(paymentMethod);
+                existingInvoice.setRemarks(remarks);
+
+                boolean updated =
+                        invoiceService.updateInvoice(existingInvoice);
+
+                if (updated) {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/invoice/view?appointmentId="
+                                    + appointmentId
+                                    + "&paymentUpdated=true"
+                    );
+
+                } else {
+
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/invoice?appointmentId="
+                                    + appointmentId
+                                    + "&paymentError=true"
+                    );
+                }
+
                 return;
             }
 
+            // Add invoice
             boolean added = invoiceService.addInvoice(invoice);
 
             if (added) {
@@ -144,6 +223,7 @@ public class InvoiceServlet extends HttpServlet {
         }
     }
 
+    // Convert amount
     private BigDecimal parseAmount(String value) {
         if (value == null || value.trim().isEmpty()) {
             return BigDecimal.ZERO;

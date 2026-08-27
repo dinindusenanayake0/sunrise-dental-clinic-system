@@ -252,6 +252,18 @@
                             </td>
 
                             <td>
+                                <% if (!"Paid".equalsIgnoreCase(
+                                        invoice.getPaymentStatus())) { %>
+
+                                <a href="<%= request.getContextPath() %>/invoice?appointmentId=<%= invoice.getAppointmentId() %>"
+                                   class="btn btn-sm btn-outline-success"
+                                   title="Add Payment">
+
+                                    <i class="bi bi-cash-coin"></i>
+
+                                </a>
+
+                                <% } %>
 
                                 <a href="<%= request.getContextPath() %>/invoice/view?appointmentId=<%= invoice.getAppointmentId() %>&source=invoices"
                                    class="btn btn-sm btn-outline-primary"
