@@ -361,7 +361,7 @@
                     </h5>
 
                     <p class="text-muted small mb-0">
-                        Select a date range to generate an appointment report.
+                        Select a single date or date range to generate an appointment report.
                     </p>
 
                 </div>

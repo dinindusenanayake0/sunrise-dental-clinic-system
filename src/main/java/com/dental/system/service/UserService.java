@@ -5,6 +5,7 @@ import com.dental.system.dao.InUserDAO;
 
 import java.util.Collections;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService implements InUserService {
 
@@ -24,7 +25,20 @@ public class UserService implements InUserService {
         if (password == null || password.trim().isEmpty()) {
             return null;
         }
-        return inUserDAO.login(username, password);
+        User user = inUserDAO.login(username.trim(), password);
+
+        if (user == null) {
+            return null;
+        }
+
+        if (!BCrypt.checkpw(
+                password,
+                user.getPassword()
+        )) {
+            return null;
+        }
+
+        return user;
     }
 
     // Add user
@@ -66,6 +80,12 @@ public class UserService implements InUserService {
                 "Administrator".equalsIgnoreCase(user.getRole())
                         ? "Administrator"
                         : "User"
+        );
+        user.setPassword(
+                BCrypt.hashpw(
+                        user.getPassword(),
+                        BCrypt.gensalt()
+                )
         );
 
         return inUserDAO.addUser(user);
@@ -140,6 +160,13 @@ public class UserService implements InUserService {
                 "Administrator".equalsIgnoreCase(user.getRole())
                         ? "Administrator"
                         : "User"
+        );
+
+        user.setPassword(
+                BCrypt.hashpw(
+                        user.getPassword(),
+                        BCrypt.gensalt()
+                )
         );
 
         return inUserDAO.updateUser(user);

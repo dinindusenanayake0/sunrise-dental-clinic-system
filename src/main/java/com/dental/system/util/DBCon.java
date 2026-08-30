@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class DBCon {
     //Database Details
     private static final String URL = "jdbc:mysql://localhost:3306/sunrise_dental_db";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
+    private static final String USERNAME = "sunrise_user";
+    private static final String PASSWORD = "Sunrise@123";
 
     public static Connection getConnection(){
         Connection connection = null;

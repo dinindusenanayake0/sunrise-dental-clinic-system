@@ -3,7 +3,7 @@
 <%@ page import="com.dental.system.model.Appointment" %>
 <%@ page import="com.dental.system.model.Patient" %>
 <%@ page import="com.dental.system.model.Invoice" %>
-
+<%@ page import="java.math.BigDecimal" %>
 
 <%
     HttpSession currentSession = request.getSession(false);
@@ -32,7 +32,15 @@
             (Invoice) request.getAttribute("existingInvoice");
 
     boolean paymentMode = existingInvoice != null;
+
+    BigDecimal treatmentCost =
+            (BigDecimal) request.getAttribute("treatmentCost");
+
+    if (treatmentCost == null) {
+        treatmentCost = BigDecimal.ZERO;
+    }
 %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,27 +63,6 @@
 </head>
 
 <body class="bg-light">
-
-<nav class="navbar navbar-dark bg-primary shadow-sm">
-
-    <div class="container">
-
-        <a href="dashboard.jsp"
-           class="navbar-brand fw-bold">
-
-            Sunrise Dental Clinic
-        </a>
-
-        <a href="logout"
-           class="btn btn-outline-light">
-
-            <i class="bi bi-box-arrow-right me-1"></i>
-            Logout
-        </a>
-
-    </div>
-
-</nav>
 
 <!-- Billing section -->
 <div class="container py-5">
@@ -337,6 +324,30 @@
                                value="<%= appointment.getAppointmentId() %>">
 
                         <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label for="treatmentCost"
+                                       class="form-label">
+
+                                    Treatment Cost
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        LKR
+                                    </span>
+
+                                    <input type="number"
+                                           class="form-control"
+                                           id="treatmentCost"
+                                           value="<%= treatmentCost %>"
+                                           readonly>
+
+                                </div>
+
+                            </div>
 
                             <div class="col-md-6 mb-3">
 
@@ -606,11 +617,11 @@
                                         Cash
                                     </option>
 
-                                    <option value="Card">
+                                    <option value="Card" disabled>
                                         Card
                                     </option>
 
-                                    <option value="Bank Transfer">
+                                    <option value="Bank Transfer" disabled>
                                         Bank Transfer
                                     </option>
 
@@ -695,6 +706,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    const treatmentCost = document.getElementById("treatmentCost");
     const doctorFee = document.getElementById("doctorFee");
     const hospitalFee = document.getElementById("hospitalFee");
     const additionalFee = document.getElementById("additionalFee");
@@ -713,7 +725,8 @@
     function calculateInvoicePreview() {
 
         const subtotal =
-            getNumber(doctorFee)
+            getNumber(treatmentCost)
+            + getNumber(doctorFee)
             + getNumber(hospitalFee)
             + getNumber(additionalFee);
 

@@ -27,13 +27,15 @@ public class InvoiceService implements InInvoiceService {
             return false;
         }
 
+        BigDecimal treatmentCost = getSafeAmount(invoice.getTreatmentCost());
         BigDecimal doctorFee = getSafeAmount(invoice.getDoctorFee());
         BigDecimal hospitalFee = getSafeAmount(invoice.getHospitalFee());
         BigDecimal additionalFee = getSafeAmount(invoice.getAdditionalFee());
         BigDecimal discount = getSafeAmount(invoice.getDiscount());
         BigDecimal amountPaid = getSafeAmount(invoice.getAmountPaid());
 
-        if (doctorFee.compareTo(BigDecimal.ZERO) < 0 ||
+        if (treatmentCost.compareTo(BigDecimal.ZERO) < 0 ||
+                doctorFee.compareTo(BigDecimal.ZERO) < 0 ||
                 hospitalFee.compareTo(BigDecimal.ZERO) < 0 ||
                 additionalFee.compareTo(BigDecimal.ZERO) < 0 ||
                 discount.compareTo(BigDecimal.ZERO) < 0 ||
@@ -43,7 +45,7 @@ public class InvoiceService implements InInvoiceService {
             return false;
         }
 
-        BigDecimal subtotal = doctorFee.add(hospitalFee).add(additionalFee);
+        BigDecimal subtotal = treatmentCost.add(doctorFee).add(hospitalFee).add(additionalFee);
 
         if (subtotal.compareTo(BigDecimal.ZERO) <= 0) {
             return false;
@@ -77,6 +79,7 @@ public class InvoiceService implements InInvoiceService {
         }
 
         invoice.setInvoiceNumber(invoiceNumber);
+        invoice.setTreatmentCost(treatmentCost);
         invoice.setDoctorFee(doctorFee);
         invoice.setHospitalFee(hospitalFee);
         invoice.setAdditionalFee(additionalFee);
@@ -87,6 +90,75 @@ public class InvoiceService implements InInvoiceService {
         invoice.setPaymentStatus(paymentStatus);
 
         return invoiceDAO.addInvoice(invoice);
+    }
+
+    // Calculate treatment cost
+    public BigDecimal calculateTreatmentCost(String treatmentType) {
+
+        if (treatmentType == null ||
+                treatmentType.trim().isEmpty()) {
+
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal total =
+                BigDecimal.ZERO;
+
+        String[] treatments =
+                treatmentType.split(",");
+
+        for (String treatment : treatments) {
+
+            String name =
+                    treatment.trim();
+
+            switch (name) {
+
+                case "Dental Consultation":
+                    total = total.add(
+                            new BigDecimal("1500.00")
+                    );
+                    break;
+
+                case "Dental Cleaning":
+                    total = total.add(
+                            new BigDecimal("2500.00")
+                    );
+                    break;
+
+                case "Tooth Filling":
+                    total = total.add(
+                            new BigDecimal("3000.00")
+                    );
+                    break;
+
+                case "Tooth Extraction":
+                    total = total.add(
+                            new BigDecimal("4000.00")
+                    );
+                    break;
+
+                case "Root Canal Treatment":
+                    total = total.add(
+                            new BigDecimal("12000.00")
+                    );
+                    break;
+
+                case "Teeth Whitening":
+                    total = total.add(
+                            new BigDecimal("8000.00")
+                    );
+                    break;
+
+                case "Dental Checkup":
+                    total = total.add(
+                            new BigDecimal("1000.00")
+                    );
+                    break;
+            }
+        }
+
+        return total;
     }
 
 

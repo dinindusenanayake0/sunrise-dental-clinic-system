@@ -16,6 +16,7 @@ public class InvoiceDAO implements InInvoiceDAO {
                 INSERT INTO invoices (
                     invoice_number,
                     appointment_id,
+                    treatment_cost,
                     doctor_fee,
                     hospital_fee,
                     additional_fee,
@@ -27,23 +28,24 @@ public class InvoiceDAO implements InInvoiceDAO {
                     payment_status,
                     remarks
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, invoice.getInvoiceNumber());
             statement.setInt(2, invoice.getAppointmentId());
-            statement.setBigDecimal(3, invoice.getDoctorFee());
-            statement.setBigDecimal(4, invoice.getHospitalFee());
-            statement.setBigDecimal(5, invoice.getAdditionalFee());
-            statement.setBigDecimal(6, invoice.getDiscount());
-            statement.setBigDecimal(7, invoice.getTotalAmount());
-            statement.setBigDecimal(8, invoice.getAmountPaid());
-            statement.setBigDecimal(9, invoice.getBalanceAmount());
-            statement.setString(10, invoice.getPaymentMethod());
-            statement.setString(11, invoice.getPaymentStatus());
-            statement.setString(12, invoice.getRemarks());
+            statement.setBigDecimal(3, invoice.getTreatmentCost());
+            statement.setBigDecimal(4, invoice.getDoctorFee());
+            statement.setBigDecimal(5, invoice.getHospitalFee());
+            statement.setBigDecimal(6, invoice.getAdditionalFee());
+            statement.setBigDecimal(7, invoice.getDiscount());
+            statement.setBigDecimal(8, invoice.getTotalAmount());
+            statement.setBigDecimal(9, invoice.getAmountPaid());
+            statement.setBigDecimal(10, invoice.getBalanceAmount());
+            statement.setString(11, invoice.getPaymentMethod());
+            statement.setString(12, invoice.getPaymentStatus());
+            statement.setString(13, invoice.getRemarks());
 
             return statement.executeUpdate() > 0;
 
@@ -85,6 +87,10 @@ public class InvoiceDAO implements InInvoiceDAO {
 
                 invoice.setAppointmentId(
                         resultSet.getInt("appointment_id")
+                );
+
+                invoice.setTreatmentCost(
+                        resultSet.getBigDecimal("treatment_cost")
                 );
 
                 invoice.setDoctorFee(
@@ -182,6 +188,7 @@ public class InvoiceDAO implements InInvoiceDAO {
                     invoice.setInvoiceId(resultSet.getInt("invoice_id"));
                     invoice.setInvoiceNumber(resultSet.getString("invoice_number"));
                     invoice.setAppointmentId(resultSet.getInt("appointment_id"));
+                    invoice.setTreatmentCost(resultSet.getBigDecimal("treatment_cost"));
                     invoice.setDoctorFee(resultSet.getBigDecimal("doctor_fee"));
                     invoice.setHospitalFee(resultSet.getBigDecimal("hospital_fee"));
                     invoice.setAdditionalFee(resultSet.getBigDecimal("additional_fee"));

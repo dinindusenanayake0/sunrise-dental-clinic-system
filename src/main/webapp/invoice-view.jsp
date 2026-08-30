@@ -863,6 +863,13 @@
                     <tbody>
 
                     <tr>
+                        <td>Treatment Cost</td>
+                        <td class="text-end">
+                            LKR <%= currency.format(invoice.getTreatmentCost()) %>
+                        </td>
+                    </tr>
+
+                    <tr>
 
                         <td class="payment-label">
                             Doctor Fee

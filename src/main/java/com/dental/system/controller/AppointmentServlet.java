@@ -39,66 +39,6 @@ public class AppointmentServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        String idValue = request.getParameter("id");
-
-        // Cancel an appointment
-        if ("cancel".equals(action) && idValue != null) {
-
-            try {
-                int appointmentId = Integer.parseInt(idValue);
-
-                Appointment appointment =
-                        appointmentService.getAppointmentById(appointmentId);
-
-                if (appointment == null) {
-                    response.sendRedirect(
-                            request.getContextPath()
-                                    + "/appointments?cancelError=true"
-                    );
-                    return;
-                }
-
-                if (!"Scheduled".equalsIgnoreCase(
-                        appointment.getStatus()
-                )) {
-
-                    response.sendRedirect(
-                            request.getContextPath()
-                                    + "/appointments?cancelError=true"
-                    );
-                    return;
-                }
-
-
-                boolean cancelled =
-                        appointmentService.updateAppointmentStatus(
-                                appointmentId,
-                                "Cancelled"
-                        );
-
-                if (cancelled) {
-                    response.sendRedirect(
-                            request.getContextPath()
-                                    + "/appointments?cancelSuccess=true"
-                    );
-                } else {
-                    response.sendRedirect(
-                            request.getContextPath()
-                                    + "/appointments?cancelError=true"
-                    );
-                }
-
-                return;
-
-            } catch (NumberFormatException e) {
-                response.sendRedirect(
-                        request.getContextPath()
-                                + "/appointments?cancelError=true"
-                );
-                return;
-            }
-        }
-
 
         // Edit appointment
         if ("edit".equalsIgnoreCase(action)) {
@@ -199,7 +139,14 @@ public class AppointmentServlet extends HttpServlet {
             LocalDate appointmentDate = LocalDate.parse(request.getParameter("appointmentDate"));
             LocalTime appointmentTime = LocalTime.parse(request.getParameter("appointmentTime"));
             String dentistName = request.getParameter("dentistName");
-            String treatmentType = request.getParameter("treatmentType");
+            String[] selectedTreatments =
+                    request.getParameterValues("treatmentType");
+
+            String treatmentType = "";
+
+            if (selectedTreatments != null) {
+                treatmentType = String.join(", ", selectedTreatments);
+            }
             String notes = request.getParameter("notes");
 
 

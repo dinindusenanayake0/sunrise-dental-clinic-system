@@ -33,18 +33,24 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"content="width=device-width, initial-scale=1.0">
 
     <title>Appointments - Sunrise Dental Clinic</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+    .treatment-cell {
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    </style>
 
 </head>
 
@@ -118,7 +124,8 @@
 
             <!-- Appointment form -->
             <form action="appointments"
-                  method="post">
+                  method="post"
+                  id="appointmentForm">
 
                 <input type="hidden"
                        name="formAction"
@@ -145,6 +152,7 @@
                         <select class="form-select"
                                 id="patientId"
                                 name="patientId"
+                                <%= editMode ? "disabled" : "" %>
                                 required>
 
                             <option value="">
@@ -169,7 +177,11 @@
                             <% } %>
 
                         </select>
-
+                        <% if (editMode) { %>
+                        <input type="hidden"
+                               name="patientId"
+                               value="<%= editAppointment.getPatientId() %>">
+                        <% } %>
                     </div>
 
 
@@ -210,10 +222,9 @@
                                id="appointmentTime"
                                name="appointmentTime"
                                value="<%= editMode
-                                              ? editAppointment.getAppointmentTime()
-                                              : "" %>"
+                               ? editAppointment.getAppointmentTime()
+                               : "" %>"
                                required>
-
                     </div>
 
                 </div>
@@ -234,6 +245,7 @@
                         <select class="form-select"
                                 id="dentistName"
                                 name="dentistName"
+                                <%= editMode ? "disabled" : "" %>
                                 required>
 
                             <option value="">
@@ -265,90 +277,163 @@
                             </option>
 
                         </select>
-
+                        <% if (editMode) { %>
+                        <input type="hidden"
+                               name="dentistName"
+                               value="<%= editAppointment.getDentistName() %>">
+                        <% } %>
                     </div>
-
 
                     <div class="col-md-6 mb-3">
 
-                        <label for="treatmentType"
-                               class="form-label">
-
+                        <label class="form-label">
                             Treatment Type
                             <span class="text-danger">*</span>
-
                         </label>
 
-                        <select class="form-select"
-                                id="treatmentType"
-                                name="treatmentType"
-                                required>
+                        <div class="dropdown">
 
-                            <option value="">
-                                Select a treatment
-                            </option>
+                            <button class="form-select text-start"
+                                    type="button"
+                                    id="treatmentDropdown"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside">
+                                Select treatment
+                            </button>
 
-                            <option value="Dental Consultation"
-                                    <%= editMode &&
-                                        "Dental Consultation".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Dental Consultation
-                            </option>
+                            <div class="dropdown-menu w-100 p-3">
 
-                            <option value="Dental Cleaning"
-                                    <%= editMode &&
-                                        "Dental Cleaning".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Dental Cleaning
-                            </option>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Dental Consultation"
+                                           id="treatmentConsultation"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Dental Consultation")
+                                               ? "checked" : "" %>>
 
-                            <option value="Tooth Filling"
-                                    <%= editMode &&
-                                        "Tooth Filling".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Tooth Filling
-                            </option>
+                                    <label class="form-check-label"
+                                           for="treatmentConsultation">
+                                        Dental Consultation
+                                    </label>
+                                </div>
 
-                            <option value="Tooth Extraction"
-                                    <%= editMode &&
-                                        "Tooth Extraction".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Tooth Extraction
-                            </option>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Dental Cleaning"
+                                           id="treatmentCleaning"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Dental Cleaning")
+                                               ? "checked" : "" %>>
 
-                            <option value="Root Canal Treatment"
-                                    <%= editMode &&
-                                        "Root Canal Treatment".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Root Canal Treatment
-                            </option>
+                                    <label class="form-check-label"
+                                           for="treatmentCleaning">
+                                        Dental Cleaning
+                                    </label>
+                                </div>
 
-                            <option value="Teeth Whitening"
-                                    <%= editMode &&
-                                        "Teeth Whitening".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Teeth Whitening
-                            </option>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Tooth Filling"
+                                           id="treatmentFilling"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Tooth Filling")
+                                               ? "checked" : "" %>>
 
-                            <option value="Dental Checkup"
-                                    <%= editMode &&
-                                        "Dental Checkup".equals(
-                                                editAppointment.getTreatmentType()
-                                        ) ? "selected" : "" %>>
-                                Dental Checkup
-                            </option>
+                                    <label class="form-check-label"
+                                           for="treatmentFilling">
+                                        Tooth Filling
+                                    </label>
+                                </div>
 
-                        </select>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Tooth Extraction"
+                                           id="treatmentExtraction"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Tooth Extraction")
+                                               ? "checked" : "" %>>
+
+                                    <label class="form-check-label"
+                                           for="treatmentExtraction">
+                                        Tooth Extraction
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Root Canal Treatment"
+                                           id="treatmentRootCanal"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Root Canal Treatment")
+                                               ? "checked" : "" %>>
+
+                                    <label class="form-check-label"
+                                           for="treatmentRootCanal">
+                                        Root Canal Treatment
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Teeth Whitening"
+                                           id="treatmentWhitening"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Teeth Whitening")
+                                               ? "checked" : "" %>>
+
+                                    <label class="form-check-label"
+                                           for="treatmentWhitening">
+                                        Teeth Whitening
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input treatment-checkbox"
+                                           type="checkbox"
+                                           name="treatmentType"
+                                           value="Dental Checkup"
+                                           id="treatmentCheckup"
+                                           onchange="updateTreatmentCount()"
+                                           <%= editMode &&
+                                               editAppointment.getTreatmentType() != null &&
+                                               editAppointment.getTreatmentType().contains("Dental Checkup")
+                                               ? "checked" : "" %>>
+
+                                    <label class="form-check-label"
+                                           for="treatmentCheckup">
+                                        Dental Checkup
+                                    </label>
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     </div>
-
-                </div>
 
 
                 <div class="mb-3">
@@ -538,7 +623,9 @@
                             <%= appointment.getDentistName() %>
                         </td>
 
-                        <td>
+                        <td class="treatment-cell"
+                            title="<%= appointment.getTreatmentType() %>">
+
                             <%= appointment.getTreatmentType() %>
                         </td>
 
@@ -954,9 +1041,34 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                window.location.href =
-                    '<%= request.getContextPath() %>/appointments?action=cancel&id='
-                    + selectedAppointmentId;
+
+                const form =
+                    document.createElement("form");
+
+                form.method = "post";
+                form.action =
+                    "<%= request.getContextPath() %>/appointments";
+
+                const actionInput =
+                    document.createElement("input");
+
+                actionInput.type = "hidden";
+                actionInput.name = "formAction";
+                actionInput.value = "cancel";
+
+                const idInput =
+                    document.createElement("input");
+
+                idInput.type = "hidden";
+                idInput.name = "appointmentId";
+                idInput.value = selectedAppointmentId;
+
+                form.appendChild(actionInput);
+                form.appendChild(idInput);
+
+                document.body.appendChild(form);
+
+                form.submit();
             }
         });
     }
@@ -1125,7 +1237,55 @@
         confirmButtonColor: '#0d6efd'
     });
 </script>
-
 <% } %>
+
+<script>
+    const appointmentForm =
+        document.getElementById("appointmentForm");
+
+    appointmentForm.addEventListener("submit", function (event) {
+
+        const selectedTreatment =
+            document.querySelector(
+                'input[name="treatmentType"]:checked'
+            );
+
+        if (!selectedTreatment) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                icon: "warning",
+                title: "Select a Treatment",
+                text: "Please select at least one treatment.",
+                confirmButtonColor: "#0d6efd"
+            });
+        }
+    });
+</script>
+
+<script>
+    function updateTreatmentCount() {
+
+        const selectedCount =
+            document.querySelectorAll(
+                'input[name="treatmentType"]:checked'
+            ).length;
+
+        const dropdown =
+            document.getElementById("treatmentDropdown");
+
+        if (selectedCount === 0) {
+            dropdown.innerText = "Select treatment";
+        } else if (selectedCount === 1) {
+            dropdown.innerText = "1 item selected";
+        } else {
+            dropdown.innerText =
+                selectedCount + " items selected";
+        }
+    }
+
+    window.addEventListener("load", updateTreatmentCount);
+</script>
 </body>
 </html>

@@ -45,6 +45,18 @@ public class AppointmentService implements InAppointmentService {
             return false;
         }
 
+        //Check Exsiting Appointment
+        boolean appointmentExists =
+                appointmentDAO.existsScheduledAppointment(
+                        appointment.getDentistName(),
+                        appointment.getAppointmentDate(),
+                        appointment.getAppointmentTime()
+                );
+
+        if (appointmentExists) {
+            return false;
+        }
+
 
         // Generate Appointment Number
         String appointmentNumber =

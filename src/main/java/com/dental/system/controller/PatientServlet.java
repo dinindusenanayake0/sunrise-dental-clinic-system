@@ -32,7 +32,8 @@ public class PatientServlet extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        if (!"update".equals(action)) {
+        if (!"update".equals(action) &&
+                !"delete".equals(action)) {
 
         //Add patient
         try {
@@ -73,13 +74,46 @@ public class PatientServlet extends HttpServlet {
             if (added) {response.sendRedirect(
                     request.getContextPath() + "/patients?added=true");
             } else {
-                request.setAttribute("error", "Patient added failed...");
-                request.getRequestDispatcher("/add-patient.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/patients?added=false");
             }
         } catch (Exception e) {
-            request.setAttribute("error", "Invalid Patient details.");
-            request.getRequestDispatcher("/add-patient.jsp");
+            response.sendRedirect(request.getContextPath() + "/patients?added=false");
         }
+            return;
+        }
+
+        // Delete patient
+        if ("delete".equals(action)) {
+
+            try {
+                int patientId =
+                        Integer.parseInt(
+                                request.getParameter("patientId")
+                        );
+
+                boolean deleted =
+                        patientService.deletePatient(patientId);
+
+                if (deleted) {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/patients?deleted=true"
+                    );
+                } else {
+                    response.sendRedirect(
+                            request.getContextPath()
+                                    + "/patients?deleted=false"
+                    );
+                }
+
+            } catch (Exception e) {
+                response.sendRedirect(
+                        request.getContextPath()
+                                + "/patients?deleted=false"
+                );
+            }
+
+            return;
         }
 
         //Update patient
@@ -139,40 +173,20 @@ public class PatientServlet extends HttpServlet {
 
     // Handle patient page requests
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
-        String action = request.getParameter("action");
+        List<Patient> patients =
+                patientService.getAllPatients();
 
-        if (!"delete".equals(action)) {
+        request.setAttribute(
+                "patients",
+                patients
+        );
 
-        //Load all patients
-        List<Patient> patients = patientService.getAllPatients();
-
-        request.setAttribute("patients", patients);
-
-        request.getRequestDispatcher("/patients.jsp").forward(request, response);
-
-            return;
-        }
-
-        //Delete patient
-        if ("delete".equals(action)) {
-
-            try {
-                int patientId = Integer.parseInt(request.getParameter("id"));
-
-                boolean deleted = patientService.deletePatient(patientId);
-
-                if (deleted) {
-                    response.sendRedirect("patients?deleted=true");
-                } else {
-                    response.sendRedirect("patients?deleted=false");
-                }
-            } catch (Exception e) {
-                response.sendRedirect("patients?deleted=false");
-            }
-            return;
-        }
+        request.getRequestDispatcher("/patients.jsp")
+                .forward(request, response);
     }
 }
