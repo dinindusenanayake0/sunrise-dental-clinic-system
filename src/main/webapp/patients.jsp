@@ -281,8 +281,8 @@
                                         data-bs-toggle="modal"
                                         data-bs-target="#editPatientModal"
                                         onclick="loadPatientData(
-                                                '<%= patient.getNic() %>',
                                                 '<%= patient.getPatientId() %>',
+                                                '<%= patient.getNic() %>',
                                                 '<%= patient.getFirstName() %>',
                                                 '<%= patient.getLastName() %>',
                                                 '<%= patient.getGender() %>',
@@ -912,8 +912,33 @@
 
             if (result.isConfirmed) {
 
-                window.location.href =
-                    "patients?action=delete&id=" + patientId;
+                const form =
+                    document.createElement("form");
+
+                form.method = "post";
+                form.action =
+                    "<%= request.getContextPath() %>/patients";
+
+                const actionInput =
+                    document.createElement("input");
+
+                actionInput.type = "hidden";
+                actionInput.name = "action";
+                actionInput.value = "delete";
+
+                const idInput =
+                    document.createElement("input");
+
+                idInput.type = "hidden";
+                idInput.name = "patientId";
+                idInput.value = patientId;
+
+                form.appendChild(actionInput);
+                form.appendChild(idInput);
+
+                document.body.appendChild(form);
+
+                form.submit();
             }
 
         });
@@ -1011,5 +1036,17 @@
 
 <% } %>
 
+<% if ("false".equals(request.getParameter("added"))) { %>
+
+<script>
+    Swal.fire({
+        icon: "error",
+        title: "Patient Registration Failed",
+        text: "Please check the patient details and try again.",
+        confirmButtonColor: "#0d6efd"
+    });
+</script>
+
+<% } %>
 </body>
 </html>

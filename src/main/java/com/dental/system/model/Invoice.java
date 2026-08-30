@@ -9,6 +9,7 @@ public class Invoice {
     private String invoiceNumber;
     private int appointmentId;
 
+    private BigDecimal treatmentCost;
     private BigDecimal doctorFee;
     private BigDecimal hospitalFee;
     private BigDecimal additionalFee;
@@ -89,6 +90,14 @@ public class Invoice {
         this.appointmentId = appointmentId;
     }
 
+    public BigDecimal getTreatmentCost() {
+        return treatmentCost;
+    }
+
+    public void setTreatmentCost(BigDecimal treatmentCost) {
+        this.treatmentCost = treatmentCost;
+    }
+    
     public BigDecimal getDoctorFee() {
         return doctorFee;
     }

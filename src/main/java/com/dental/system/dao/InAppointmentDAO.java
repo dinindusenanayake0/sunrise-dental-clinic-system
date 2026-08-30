@@ -2,6 +2,8 @@ package com.dental.system.dao;
 
 import com.dental.system.model.Appointment;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface InAppointmentDAO {
@@ -19,5 +21,7 @@ public interface InAppointmentDAO {
     String generateNextAppointmentNumber();
 
     boolean updateAppointmentStatus(int appointmentId, String status);
+
+    boolean existsScheduledAppointment(String dentistName, LocalDate appointmentDate, LocalTime appointmentTime);
 
 }

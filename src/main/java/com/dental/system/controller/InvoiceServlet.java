@@ -82,6 +82,17 @@ public class InvoiceServlet extends HttpServlet {
                 return;
             }
 
+            BigDecimal treatmentCost =
+                    ((InvoiceService) invoiceService)
+                            .calculateTreatmentCost(
+                                    appointment.getTreatmentType()
+                            );
+
+            request.setAttribute(
+                    "treatmentCost",
+                    treatmentCost
+            );
+
             Patient patient = patientService.getPatientById(appointment.getPatientId());
 
             if (patient == null) {
@@ -117,6 +128,13 @@ public class InvoiceServlet extends HttpServlet {
                 return;
             }
 
+            BigDecimal treatmentCost =
+                    ((InvoiceService) invoiceService)
+                            .calculateTreatmentCost(
+                                    appointment.getTreatmentType()
+                            );
+
+
             BigDecimal doctorFee = parseAmount(request.getParameter("doctorFee"));
             BigDecimal hospitalFee = parseAmount(request.getParameter("hospitalFee"));
             BigDecimal additionalFee = parseAmount(request.getParameter("additionalFee"));
@@ -129,6 +147,7 @@ public class InvoiceServlet extends HttpServlet {
             Invoice invoice = new Invoice();
 
             invoice.setAppointmentId(appointmentId);
+            invoice.setTreatmentCost(treatmentCost);
             invoice.setDoctorFee(doctorFee);
             invoice.setHospitalFee(hospitalFee);
             invoice.setAdditionalFee(additionalFee);

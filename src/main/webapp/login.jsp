@@ -72,7 +72,7 @@
             <% String error = (String) request.getAttribute("error");
                if (error != null) { %>
 
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" id="loginError">
                     <%= error %>
                 </div>
 
@@ -87,6 +87,15 @@
     </div>
 
 </div>
+<script>
+    setTimeout(function () {
+        const errorAlert =
+                document.getElementById("loginError");
 
+        if (errorAlert) {
+            errorAlert.style.display = "none";
+        }
+    }, 3000);
+</script>
 </body>
 </html>

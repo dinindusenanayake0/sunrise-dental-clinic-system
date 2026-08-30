@@ -15,12 +15,11 @@ public class UserDAO implements InUserDAO {
     // login
     @Override
     public User login(String username, String password) {
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
 
         try (Connection connection = DBCon.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
-            statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {

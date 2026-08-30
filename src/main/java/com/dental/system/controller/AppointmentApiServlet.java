@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +28,24 @@ public class AppointmentApiServlet extends HttpServlet {
     // Handle appointment API requests
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null ||
+                session.getAttribute("loggedUser") == null) {
+
+            response.setStatus(
+                    HttpServletResponse.SC_UNAUTHORIZED
+            );
+
+            response.setContentType("application/json");
+
+            response.getWriter().print(
+                    "{\"message\":\"Unauthorized access\"}"
+            );
+
+            return;
+        }
 
         response.setContentType("application/json");
 

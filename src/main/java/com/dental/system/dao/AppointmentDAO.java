@@ -4,6 +4,8 @@ import com.dental.system.model.Appointment;
 import com.dental.system.util.DBCon;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -283,4 +285,39 @@ public class AppointmentDAO implements InAppointmentDAO {
 
         return null;
     }
+
+    @Override
+    public boolean existsScheduledAppointment(
+            String dentistName,
+            LocalDate appointmentDate,
+            LocalTime appointmentTime
+    ) {
+
+        String sql = "SELECT COUNT(*) FROM appointments " +
+                     "WHERE dentist_name = ? " +
+                     "AND appointment_date = ? " +
+                     "AND appointment_time = ? " +
+                     "AND status = 'Scheduled'";
+
+        try (Connection connection = DBCon.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, dentistName);
+            statement.setDate(2, java.sql.Date.valueOf(appointmentDate));
+            statement.setTime(3, java.sql.Time.valueOf(appointmentTime));
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 }
